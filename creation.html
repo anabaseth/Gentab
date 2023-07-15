@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="fr" class="h-100" data-bs-theme="auto">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="application-name" content="Gentab-création">
+	<meta name="description" content="Outil de génération aléatoire">
+	<meta name="version" content="2.0 b">
+	<meta name="revision" content="2023-07-23">
+	<meta name="author" content="Myrhanda">
+	<meta name="contact" content="Myrhanda#6802 on Discord">
+	<meta name="license" content="MIT - beerware">
+	<meta name="color-scheme" content="light dark" />
+	<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F9FA" />
+	<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2B3035" />
+
+	<meta property="og:title" content="Gentab-création">
+	<meta property="og:description" content="Outil de génération aléatoire">
+	<meta property="og:type" content="website">
+	<title>Création</title>
+	<!-- Inclure la bibliothèque Bootstrap CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10/font/bootstrap-icons.min.css">
+	<!-- Inclure la bibliothèque Vue.js -->
+	<script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+	<!-- Inclure la bibliothèque Bootstrap-Vue JS -->
+
+	<script src="https://unpkg.com/bootstrap-vue@2.21.2/dist/bootstrap-vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+<body class="d-flex flex-column h-100 bg-body-tertiary">
+	<main class="flex-shrink-0">
+		<div class="container pt-4 pb-5" id="app">
+			<h1 class="display-1 text-center">{{currentTranslations.titre}}</h1>
+			<p class="my-0 lead text-center">{{currentTranslations.sousTitre}}</p>
+			<div class=" position-absolute top-0 end-0 m-4">
+
+				<ul class="nav">
+					<li class="nav-item" v-for="lg of langues">
+						<button @click="changeLangue(lg)" class="btn btn-outline-secondary">
+							<i>{{lg}}</i>
+						</button>
+					</li>
+					<li class="nav-item">
+						<button id="theme" class="btn btn-outline-secondary" @click="setTheme">
+							<i class="bi bi-lightbulb"></i>
+						</button>
+					</li>
+				</ul>
+			</div>
+
+			<div class="container">
+				<div id="menu">
+					<ul class="nav nav-tabs" id="menuTab" role="tablist">
+						<li class="nav-item" role="presentation">
+							<button class="nav-link active" id="fichiers-tab" data-bs-toggle="tab"
+								data-bs-target="#fichiers" type="button" role="tab" aria-controls="fichiers"
+								aria-selected="true">
+								{{currentTranslations.fichiers}}
+							</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button :disabled="Collection === null" class="nav-link" id="detail-tab"
+								data-bs-toggle="tab" data-bs-target="#detail" type="button" role="tab"
+								aria-controls="Détail de la collection" aria-selected="true">
+								{{currentTranslations.detailCollectionTab}}
+							</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button :disabled="Collection === null || Collection.tables.length===0" class="nav-link"
+								id="tables-tab" data-bs-toggle="tab" data-bs-target="#tables" type="button" role="tab"
+								aria-controls="Détail des tables" aria-selected="true">
+								{{currentTranslations.tablesTab}}
+							</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button :disabled="Collection === null || Collection.sequences.length===0" class="nav-link"
+								id="sequences-tab" data-bs-toggle="tab" data-bs-target="#sequences" type="button"
+								role="tab" aria-controls="Détail des séquences" aria-selected="true">
+								{{currentTranslations.sequenceTab}}
+							</button>
+						</li>
+						<li class="nav-item" role="presentation">
+							<button
+								:disabled="Collection === null || Collection.tables.length===0 || Collection.sequences.length===0"
+								class="nav-link" id="export-tab" data-bs-toggle="tab" data-bs-target="#export"
+								type="button" role="tab" aria-controls="Détail des séquences" aria-selected="true">
+								{{currentTranslations.exportTab}}
+							</button>
+						</li>
+					</ul>
+				</div>
+				<div class="tab-content">
+					<div class="tab-pane fade show active" id="fichiers" role="tabpanel" aria-labelledby="fichiers-tab">
+						<div class=" text-center p-0">
+							<div class="container">
+
+								<div class="row">
+									<div class="col py-5 position-relative">
+										<form id="load-form">
+											<i class="bi bi-cloud-upload display-2 text-primary"></i>
+
+											<p class="my-2">
+												{{currentTranslations.selectFileGntb}}<br><i>{{currentTranslations.orLbl}}</i>
+											</p>
+
+											<label for="fileInput"
+												class="btn btn-primary stretched-link">{{currentTranslations.selectFileLbl}}</label>
+											<input id="fileInput" class="position-absolute invisible"
+												@change="handleFileOpen" type="file" accept=".gntb">
+										</form>
+									</div>
+									<div class="col py-5 position-relative border-start">
+										<i class="bi bi-file-earmark-plus display-2 text-primary"></i>
+
+										<p class="my-2">{{currentTranslations.createNewCollection}}<br><br></p>
+
+										<button id="create" type="button" class="btn btn-primary stretched-link"
+											@click="newCollection">Nouvelle collection</button>
+									</div>
+									<div class="col py-5 position-relative border-start" id="btnImport"
+										v-if="Collection">
+										<form id="load-form">
+											<i class="bi bi-cloud-download display-2 text-primary"></i>
+
+											<p class="my-2">{{currentTranslations.importLbl}}<br></p>
+
+											<label for="fileImport"
+												class="btn btn-primary stretched-link">{{currentTranslations.selectFileLbl}}</label>
+											<input id="fileImport" class="position-absolute invisible"
+												@change="handleFileImport" type="file" accept=".gntb">
+										</form>
+										<!-- Modal -->
+										<div class="modal fade" id="importModal" data-bs-backdrop="static" tabindex="-1"
+											aria-labelledby="importModalLabel" aria-hidden="true">
+											<div class="modal-dialog">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" id="importModalLabel">
+															{{currentTranslations.importLbl}}</h5>
+														<button type="button" class="btn-close" data-bs-dismiss="modal"
+															aria-label="Close"></button>
+													</div>
+													<div class="modal-body ">
+														<div v-if="Import">
+															<div class="col-12 ">
+																<h3>{{currentTranslations.importTableLbl}}</h3>
+																<div class="input-group input-group-text"
+																	v-for="(table,index) of Import.tables">
+																	<input type="checkbox" v-model="table.import"
+																		class="form-check-input"
+																		:disabled="!table.importable"
+																		:id="'importTable-'+index">
+																	<label :for="'importTable-'+index">{{table.nom}}
+																	</label>
+																</div>
+															</div>
+															<div class="col-12">
+																<h3>{{currentTranslations.importTableLbl}}</h3>
+																<div class="input-group-text"
+																	v-for="(sequence,index) of Import.sequences">
+																	<input type="checkbox" v-model="sequence.import"
+																		class="form-check-input"
+																		:id="'importSequence-'+index">
+																	<label
+																		:for="'importSequence-'+index">{{sequence.nom}}
+																	</label>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-secondary"
+															data-bs-dismiss="modal">{{currentTranslations.annulerLbl}}</button>
+														<button type="button" class="btn btn-danger"
+															data-bs-dismiss="modal"
+															@click="importer()">{{currentTranslations.confirmLbl}}</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="export" role="tabpanel" aria-labelledby="export-tab">
+						<div class="p-0">
+							<div class="container" v-if="Collection">
+
+								<div class="row">
+									<div class="col-12 border-start">
+										<h2>{{currentTranslations.detailCollectionTab}}</h2>
+										<ul class="list-group">
+											<li class="list-group-item">
+												<h3>{{currentTranslations.titreLbl}}:</h3>{{Collection.titre}}
+											</li>
+											<li class="list-group-item">
+												<h3>{{currentTranslations.descriptionLbl}}:</h3>
+												{{Collection.description}}
+											</li>
+										</ul>
+									</div>
+									<div class="col-6 border-start">
+										<h2>{{currentTranslations.tablesTab}}</h2>
+										<ul class="list-group">
+											<li class="list-group-item" v-for="table of importCollection.tables" v-if="!table.invalide">
+												{{table.nom}}: {{table.lignes.length}} 
+												{{currentTranslations.lignesLbl}}.
+											</li>
+											<li class="list-group-item list-group-item-danger" v-for="table of importCollection.tables" v-if="table.invalide">
+												<h5 class="mb-1">{{table.nom}}: {{table.lignes.length}} 
+												{{currentTranslations.lignesLbl}}.</h5>
+												<small>{{currentTranslations[table.motif]}}</small>
+											</li>
+										</ul>
+									</div>
+									<div class="col-6 border-start">
+										<h2>{{currentTranslations.sequenceTab}}</h2>
+										<ul class="list-group">
+											<li class="list-group-item" v-for="sequence of importCollection.sequences" v-if="!sequence.invalide">
+												{{sequence.nom}}: {{sequence.items.length}}
+												{{currentTranslations.colonnesLbl}}.
+											</li>
+											<li class="list-group-item list-group-item-danger" v-for="sequence of importCollection.sequences" v-if="sequence.invalide">
+												<h5 class="mb-1">{{sequence.nom}}: {{sequence.items.length}}
+												{{currentTranslations.colonnesLbl}}.</h5>
+      											<small>{{currentTranslations[sequence.motif]}}</small>
+											</li>
+										</ul>
+									</div>
+									<div class="col-12 border-start">
+										<h2>{{currentTranslations.fileNameLbl}}</h2>
+										<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">										
+											<symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+											  <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+											</symbol>
+										</svg>
+										<div class="alert alert-danger d-flex align-items-center" role="alert" v-if="importCollection.invalide">
+											<svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+											<div>
+												{{currentTranslations.alertExportLbl}}
+											</div>
+										</div>
+										<div class="input-group form-floating">
+											<input v-model="nomFichier" class="form-control" id="i_nomFichier"><label
+												for="i_nomFichier">{{currentTranslations.fileNameLbl}}</label>
+											<button type="button" class="btn btn-outline-secondary"
+												:disabled="nomFichier===''" @click="exportToJson">
+												<i class="bi bi-file-earmark-plus text-secondary"></i>
+												{{currentTranslations.exporterLbl}}</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab"
+						v-if="Collection">
+						<div class="p-0">
+							<div class="container">
+								<div class="row">
+									<div class="col card ">
+										<h2>{{currentTranslations.detailCollectionTab}}</h2>
+										<ul class="list-group">
+											<li class="list-group-item">
+												<div class="form-floating">
+													<input v-model="Collection.titre" id="i_titre"
+														class="form-control"><label for="i_titre"
+														class="form-label">{{currentTranslations.titreLbl}}</label>
+												</div>
+											</li>
+											<li class="list-group-item">
+												<div class="form-floating">
+													<textarea v-model="Collection.description" id="i_description"
+														class="form-control"></textarea><label for="i_description"
+														class="form-label">{{currentTranslations.descriptionLbl}}</label>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col card">
+										<h2>{{currentTranslations.tablesTab}} <i class="bi bi-pencil"></i><input
+												type="checkbox" v-model="showAddTables" id="i_reglageTables"
+												class="form-check-input"></h2>
+
+										<div class="d-grid gap-2">
+											<button :disabled="!showAddTables" class="btn btn-primary" type="button"
+												@click="Collection.addTable()">
+												{{currentTranslations.addTableLbl}}
+											</button>
+										</div>
+										<ul class="list-group">
+											<li v-for="(table, index) in importCollection.tables" class="list-group-item">
+												<div class="row">
+													<div class="col form-floating input-group">
+														<input :disabled="!showAddTables" id="i_tableNom" v-if="!table.invalide"
+															v-model="table.nom" class="form-control">
+															<input :disabled="!showAddTables" id="i_tableNom" v-if="table.invalide"
+															v-model="table.nom" class="form-control is-invalid"><label
+															for="i_tableNom" class="form-label">{{table.lignes.length}}
+															{{currentTranslations.lignesLbl}}.</label>
+
+														<button type="button" class="btn btn-outline-secondary"
+															data-bs-toggle="modal"
+															:data-bs-target="'#delTableModal-'+index"
+															:disabled="!showAddTables"
+															v-if="showAddTables && !Collection.useTableInSequence(table)"
+															data-bs-toggle="tooltip" data-bs-placement="top"
+															title="Supprimer la table">
+															<i class="bi bi-trash"></i>
+														</button>													
+														<div id="validationTableFeedback" class="invalid-feedback">
+															<small>{{currentTranslations[table.motif]}}</small>
+														</div>
+														<!-- Modal -->
+														<div class="modal fade" :id="'delTableModal-'+index"
+															tabindex="-1" aria-labelledby="exampleModalLabel"
+															aria-hidden="true">
+															<div class="modal-dialog">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<h5 class="modal-title" id="exampleModalLabel">
+																			{{currentTranslations.deleteTableLbl}}
+																			{{table.nom}}</h5>
+																		<button type="button" class="btn-close"
+																			data-bs-dismiss="modal"
+																			aria-label="Close"></button>
+																	</div>
+																	<div class="modal-body">
+																		{{currentTranslations.confirmDeleteTableLbl}}
+																		{{table.nom}}?
+																	</div>
+																	<div class="modal-footer">
+																		<button type="button" class="btn btn-secondary"
+																			data-bs-dismiss="modal">{{currentTranslations.annulerLbl}}</button>
+																		<button type="button" class="btn btn-danger"
+																			data-bs-dismiss="modal"
+																			@click="Collection.deleteTableByIndex(index)">{{currentTranslations.confirmLbl}}</button>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+										</ul>
+
+									</div>
+
+
+
+
+									<div class="col card">
+										<h2>{{currentTranslations.sequenceTab}}<i class="bi bi-pencil"></i><input
+												type="checkbox" v-model="showReglageSequences" id="i_reglageSequence"
+												class="form-check-input"></h2>
+										<div class="d-grid gap-2">
+											<button :disabled="!showReglageSequences" class="btn btn-primary"
+												type="button"
+												@click="Collection.addSequence()">{{currentTranslations.ajouterSequenceLbl}}</button>
+										</div>
+										<ul class="list-group">
+											<li v-for="(sequence, index) in importCollection.sequences"
+												class="list-group-item">
+												<div class="row">
+													<div class="col form-floating input-group">
+															<input :disabled="!showReglageSequences" v-model="sequence.nom" v-if="!sequence.invalide"
+																class="form-control" id="i_sequenceNom">
+															<input :disabled="!showReglageSequences" v-model="sequence.nom" v-if="sequence.invalide"
+																class="form-control is-invalid" id="i_sequenceNom">
+														<label for="i_sequenceNom"
+															class="form-label">{{sequence.items.length}}
+															{{currentTranslations.colonnesLbl}}.</label>
+														<button type="button" class="btn btn-outline-secondary"
+															data-bs-toggle="modal"
+															:data-bs-target="'#delSeqModal-'+index"
+															:disabled="!showReglageSequences"
+															v-if="showReglageSequences" data-bs-toggle="tooltip"
+															data-bs-placement="top" title="Supprimer la séquence">
+															<i class="bi bi-trash"></i>
+														</button>	
+														<!-- Modal -->
+														<div class="modal fade" :id="'delSeqModal-'+index" tabindex="-1"
+															:aria-labelledby="'delSeqModalLabel-'+index"
+															aria-hidden="true">
+															<div class="modal-dialog">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<h5 class="modal-title"
+																			:id="'delSeqModalLabel-'+index">
+																			{{currentTranslations.deleteSequenceLbl}}
+																			{{sequence.nom}}</h5>
+																		<button type="button" class="btn-close"
+																			data-bs-dismiss="modal"
+																			aria-label="Close"></button>
+																	</div>
+																	<div class="modal-body">
+																		{{currentTranslations.confirmDeleteSequenceLbl}}
+																		{{sequence.nom}}?
+																	</div>
+																	<div class="modal-footer">
+																		<button type="button" class="btn btn-secondary"
+																			data-bs-dismiss="modal">{{currentTranslations.annulerLbl}}</button>
+																		<button type="button" class="btn btn-danger"
+																			data-bs-dismiss="modal"
+																			@click="Collection.deleteSequenceByIndex(index)">{{currentTranslations.confirmLbl}}</button>
+																	</div>
+																</div>
+															</div>
+														</div>
+
+														<button type="button" class="btn btn-outline-secondary"
+															data-bs-toggle="modal"
+															:data-bs-target="'#duplSeqModal-'+index"
+															:disabled="!showReglageSequences"
+															v-if="showReglageSequences" data-bs-toggle="tooltip"
+															data-bs-placement="top" title="Dupliquer la séquence">
+															<i class="bi bi-c-square"></i>
+														</button>												
+														<div id="validationSequenceFeedback" class="invalid-feedback">
+															<small>{{currentTranslations[sequence.motif]}}</small>
+														</div>
+														<!-- Modal -->
+														<div class="modal fade" :id="'duplSeqModal-'+index"
+															tabindex="-1" :aria-labelledby="'duplSeqModalLabel-'+index"
+															aria-hidden="true">
+															<div class="modal-dialog">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<h5 class="modal-title"
+																			:id="'duplSeqModalLabel-'+index">
+																			{{currentTranslations.dupliquerSequenceLbl}}
+																			{{sequence.nom}}</h5>
+																		<button type="button" class="btn-close"
+																			data-bs-dismiss="modal"
+																			aria-label="Close"></button>
+																	</div>
+																	<div class="modal-body">
+																		{{currentTranslations.confirmDupliquerSequenceLbl}}
+																		{{sequence.nom}}?
+																	</div>
+																	<div class="modal-footer">
+																		<button type="button" class="btn btn-secondary"
+																			data-bs-dismiss="modal">{{currentTranslations.annulerLbl}}
+																		</button>
+																		<button type="button" class="btn btn-danger"
+																			data-bs-dismiss="modal"
+																			@click="Collection.dupliquerSequence(sequence)">{{currentTranslations.confirmLbl}}
+																		</button>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="tab-pane fade" id="tables" role="tabpanel" aria-labelledby="tables" v-if="Collection">
+						<div class=" p-0" v-if="Collection">
+							<div class="container row">
+								<div class="list-group col-3" v-if="Collection.tables.length">
+									<div v-if="table">
+										<h2 class="list-group-item">{{currentTranslations.reglageLbl}}</h2>
+										<div class="list-group-item input-group">
+											<div class="list-group-item btn-group" role="group"
+												aria-label="Basic checkbox toggle button group">
+												<input type="checkbox" class="btn-check" id="iReglage"
+													autocomplete="off" v-model="showReglageTables">
+												<label class="btn btn-outline-primary" for="iReglage"><i
+														class="bi bi-pencil">{{currentTranslations.modificationLbl}}</i></label>
+											</div>
+											<div class="list-group-item btn-group" role="group"
+												aria-label="Basic checkbox toggle button group"
+												v-if="showReglageTables">
+												<input type="checkbox" class="btn-check" id="i_showEncodage"
+													autocomplete="off" v-model="showEncodage">
+												<label class="btn btn-outline-primary" for="i_showEncodage"><i
+														class="bi bi-pencil">{{currentTranslations.expressLbl}}</i></label>
+											</div>
+											<div class="list-group-item btn-group" role="group"
+												aria-label="Basic checkbox toggle button group"
+												v-if="showReglageTables">
+												<input type="checkbox" class="btn-check" id="i_showDelLignes"
+													autocomplete="off" v-model="showDelLignes">
+												<label class="btn btn-outline-primary" for="i_showDelLignes"><i
+														class="bi bi-pencil">{{currentTranslations.supprimerLignesLbl}}</i></label>
+											</div>
+										</div>
+										<h2 class="list-group-item">{{currentTranslations.affichageLbl}}</h2>
+										<div class="input-group btn-group list-group-item" role="group"
+											aria-label="Basic radio toggle button group" value="input"
+											v-model="affichageTable">
+											<input type="radio" class="btn-check" name="btnradio" id="btnradio1"
+												autocomplete="off" value="input" v-model="affichageTable" checked>
+											<label class="btn btn-outline-primary"
+												for="btnradio1"><i>{{currentTranslations.compactLbl}}</i></label>
+
+											<input type="radio" class="btn-check" name="btnradio" id="btnradio2"
+												autocomplete="off" value="pagination" v-model="affichageTable">
+											<label class="btn btn-outline-primary"
+												for="btnradio2"><i>{{currentTranslations.etenduLbl}}</i></label>
+
+											<input type="radio" class="btn-check" name="btnradio" id="btnradio3"
+												autocomplete="off" value="avance" v-model="affichageTable">
+											<label class="btn btn-outline-primary"
+												for="btnradio3"><i>{{currentTranslations.avanceLbl}}</i></label>
+										</div>
+
+									</div>
+									<h2 v-if="Collection.tables.length" class="list-group-item">
+										{{currentTranslations.tablesTab}}</h2>
+									<button v-for="table in Collection.tables" type="button"
+										class="list-group-item list-group-item-action" data-bs-toggle="tab"
+										data-bs-target="#tables" aria-controls="tables" aria-selected="false"
+										@click="activateTable(table)">
+										{{table.nom}}
+									</button>
+								</div>
+								<div class="tab-pane col">
+									<div v-if="table">
+										<div v-if="showEncodage">
+											<div class="row text-center">
+												<h2>{{currentTranslations.encodageRapideLbl}}</h2>
+												<div class="col-6">
+
+													<div class="input-group form-check-inline">
+														{{currentTranslations.separateurLbl}}:
+														<div v-for="sep of separatorsList" class="form-check">
+															<input class="form-check-input" type="radio"
+																name="flexRadioDefault" :id="'separator-'+sep.titre"
+																v-model="separator" :value="sep.separator">
+															<label class="form-check-label"
+																:for="'separator-'+sep.titre">
+																{{sep.titre}}
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="col-6">
+													<b-pagination v-if="encodedData.length>lignesPerPage"
+														class="justify-content-center" v-model="currentEncondedPage"
+														:total-rows="encodedData.length" :per-page="lignesPerPage"
+														class="my-4"></b-pagination>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-6">
+													<div class="input-group form-floating">
+														<textarea style="height: 400px;" :disabled="!showReglageTables"
+															v-model="encodageData" id="i_encodage"
+															class="form-control"></textarea form=i_encodage>
+															<label>{{currentTranslations.encodageRapideLabel}}</label>
+														</div>
+													</div>
+													<div class="col-6">																
+														<ul class="list-group" v-if="encodedData.length>0">
+															<li v-for="(item, index) in paginatedEncodedData"class="list-group-item">
+																{{item}}
+															</li>
+														</ul>																
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-6">
+													</div>
+													<div class="col-6">
+														<b-pagination v-if="encodedData.length>lignesPerPage" class="justify-content-center" v-model="currentEncondedPage" :total-rows="encodedData.length" :per-page="lignesPerPage" class="my-4"></b-pagination>
+													</div>
+												</div>
+												<button v-if="encodedData.length" :disabled="!showReglageTables" class="btn btn-secondary form-control" @click="encodage">{{currentTranslations.injectionLbl_1}} {{encodedData.length}} {{currentTranslations.injectionLbl_2}} {{table.nom}}. </button>
+										</div>	
+												
+											
+											
+                                            <h1>{{currentTranslations.detailTableLbl}} {{table.nom}}</h1>     
+											<div v-if="affichageTable=='input'">												
+												<div class="input-group" >
+													<div v-for="(item, index) in table.lignes"  v-if="index!==table.lignes.length-1 || showReglageTables">
+														<input  v-model="item.contenu" @input="table.modificationLigne(item)" :disabled="!showReglageTables">
+														<button class="btn btn-outline-secondary" @click="table.deleteLigne(item)" :disabled="!showReglageTables" v-if="index!==table.lignes.length-1 && showDelLignes">
+															<i class="bi bi-trash"></i>
+														</button>
+													</div>
+												</div>
+												
+											</div>
+											<div v-if="affichageTable==='pagination' || affichageTable==='avance'">
+												
+												
+												<b-pagination class="justify-content-center" v-model="currentPageTable" :total-rows="table.lignes.length" :per-page="lignesPerPage" class="my-4"></b-pagination>
+												
+												<ul class="list-group col-12" v-if="affichageTable==='pagination' || affichageTable==='avance'">
+													<li v-for="(item, index) in paginatedLignesList"class="list-group-item" v-if="showLigne(index)">
+														<div class="input-group form-floating">
+															<span class="input-group-text" id="lbl_text">{{currentTranslations.contenuLbl}}</span>
+															<textarea id="i_contenu" aria-describedby="lbl_text" class="form-control" v-model="item.contenu" @input="table.modificationLigne(item)" :disabled="!showReglageTables"></textarea>
+
+														<span class="input-group-text" id="lbl_poids"
+															v-if="affichageTable==='avance'">{{currentTranslations.poidsLbl}}</span>
+														<input v-if="affichageTable==='avance'"
+															aria-describedby="lbl_poids" class="form-control"
+															v-model="item.poids" type="number"
+															:disabled="!showReglageTables" id="i_poids">
+
+														<button class="btn btn-outline-secondary"
+															@click="table.deleteLigne(item)"
+															:disabled="!showReglageTables"
+															v-if="index!==table.lignes.length-1 && showDelLignes">
+															<i class="bi bi-trash"></i>
+														</button>
+													</div>
+													</li>
+													</ul>
+													<b-pagination class="justify-content-center"
+														v-model="currentPageTable" :total-rows="table.lignes.length"
+														:per-page="lignesPerPage" class="my-4"></b-pagination>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="tab-pane fade" id="sequences" role="tabpanel" aria-labelledby="sequence"
+								v-if="Collection">
+								<div class=" p-0" v-if="Collection">
+									<div class="container row">
+										<div class="list-group col-2 ">
+											<h2 v-if="Collection.sequences.length" class="list-group-item">
+												{{currentTranslations.sequencesLbl}}</h2>
+											<button v-for="sequence in Collection.sequences" type="button"
+												class="list-group-item list-group-item-action" data-bs-toggle="tab"
+												data-bs-target="#sequences" aria-controls="sequences"
+												aria-selected="false" @click="activateSequence(sequence)">
+												{{sequence.nom}}
+											</button>
+										</div>
+
+										<div class="col-10" id="test">
+											<div v-if="sequence">
+												<div class="row">
+													<h2>{{currentTranslations.detailSequenceLbl}} {{sequence.nom}}</h2>
+													<div class="form-floating">
+														<textarea v-model="sequence.description" id="i_description"
+															class="form-control"
+															:disabled="!showReglageColonne"></textarea>
+														<label for="i_description"
+															class="form-label">{{currentTranslations.descriptionLbl}}</label>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col">
+														<h2>Colonnes <i class="bi bi-pencil"></i><input type="checkbox"
+																v-model="showReglageColonne" id="i_reglageColonne"
+																class="form-check-input"></h2>
+														<div class="d-grid gap-2 ">
+															<button :disabled="!showReglageColonne"
+																class="btn btn-outline-primary" type="button"
+																@click="sequence.addItem()">
+																{{currentTranslations.addColonneLbl}}
+															</button>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col" v-for="(item, index) in sequence.items">
+														<ul class="list-group">
+															<li class="list-group-item">
+																<div class="row">
+																	<div class="col">
+																		<div class="form-floating input-group">
+																			<input :disabled="!showReglageColonne"
+																				class="form-control" id="i_titre"
+																				v-model="item.titre" type="text"><label
+																				for="i_titre"
+																				class="form-label">{{currentTranslations.titreColLbl}}</label>
+																			<button v-if="showReglageColonne"
+																				:disabled="!showReglageColonne"
+																				class="btn btn-outline-secondary"
+																				type="button" @click="editItem(index)">
+																				<i class="bi bi-pencil"></i>
+																			</button>
+																			<button v-if="showReglageColonne"
+																				type="button"
+																				class="btn btn-outline-secondary"
+																				data-bs-toggle="modal"
+																				:data-bs-target="'#delItemModal-'+index"
+																				:disabled="!showReglageColonne"
+																				data-bs-toggle="tooltip"
+																				data-bs-placement="top"
+																				title="Supprimer la colonne">
+																				<i class="bi bi-trash"></i>
+																			</button>
+																			<!-- Modal -->
+																			<div class="modal fade"
+																				:id="'delItemModal-'+index"
+																				tabindex="-1"
+																				:aria-labelledby="'delItemModalLabel-'+index"
+																				aria-hidden="true">
+																				<div class="modal-dialog">
+																					<div class="modal-content">
+																						<div class="modal-header">
+																							<h5 class="modal-title"
+																								:id="'delItemModalLabel-'+index">
+																								{{currentTranslations.deleteColLbl}}
+																								{{item.titre}}</h5>
+																							<button type="button"
+																								class="btn-close"
+																								data-bs-dismiss="modal"
+																								aria-label="Close"></button>
+																						</div>
+																						<div class="modal-body">
+																							{{currentTranslations.confirmDeleteColLbl}}
+																							{{item.titre}}?
+																						</div>
+																						<div class="modal-footer">
+																							<button type="button"
+																								class="btn btn-secondary"
+																								data-bs-dismiss="modal">{{currentTranslations.annulerLbl}}</button>
+																							<button type="button"
+																								class="btn btn-danger"
+																								data-bs-dismiss="modal"
+																								@click="deleteItem(item)">{{currentTranslations.confirmLbl}}</button>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</li>
+															<li class="list-group-item"
+																v-for="(reference,indexRef) in item.references">
+																<ul class="list-group">
+																	<li class="list-group-item">
+																		{{descriptionRef(item,indexRef)}}
+																	</li>
+																</ul>
+															</li>
+													</div>
+												</div>
+											</div>
+											<div v-if="item && showReglageColonne">
+												<div class="row">
+													<h3>
+														{{sequence.nom}} : {{item.titre}}
+													</h3>
+													<div class="d-grid gap-2 ">
+														<button class="btn btn-outline-primary" type="button"
+															@click="item.addRef()">
+															<i
+																class="bi bi-plus"></i>{{currentTranslations.addTableToColonne}}
+														</button>
+													</div>
+													<div v-for="(reference,indexRef) in item.references"
+														class=" input-group">
+														<div class="form-floating">
+															<select class="form-select" v-model="reference.ID"
+																aria-label="Sélectionner une table" id="iSequenceRef">
+																<option>{{currentTranslations.selectTable}}.</option>
+																<option v-for="table in Collection.tables"
+																	:disabled="item.useTable(table.ID)"
+																	:value="table.ID">{{ table.nom }}</option>
+															</select>
+															<label for="iSequenceRef"
+																class="form-label">{{currentTranslations.selectTable}}</label>
+														</div>
+														<div class="form-floating">
+															<input class="form-control" id="i_min"
+																v-model="reference.min" type="number" min="1"
+																:max="reference.max"><label for="i_min"
+																class="form-label">{{currentTranslations.Minimum}}</label>
+														</div>
+														<div class="form-floating">
+															<input class="form-control" id="i_max"
+																v-model="reference.max" type="number"
+																:min="reference.min"><label for="i_max"
+																class="form-label">{{currentTranslations.Maximum}}</label>
+														</div>
+														<div class="form-floating">
+															<input class="form-control" id="i_max"
+																v-model="reference.poids" type="number" min="1"><label
+																for="i_poids" class="form-label">Poids</label>
+														</div>
+														<div class="form-floating" v-if="item.references.length !== 1">
+															<button type="button"
+																class="btn btn-outline-secondary form-control"
+																data-bs-toggle="modal"
+																:data-bs-target="'#delRefModal-'+indexRef"
+																v-if="item.references.length !== 1"
+																data-bs-toggle="tooltip" data-bs-placement="top"
+																title="Supprimer la table">
+																<i class="bi bi-trash"></i>
+																{{currentTranslations.delTableToCol}}
+															</button>
+															<!-- Modal -->
+
+														</div>
+														<div class="modal fade" :id="'delRefModal-'+indexRef"
+															tabindex="-1"
+															:aria-labelledby="'delRefModalLabel-'+indexRef"
+															aria-hidden="true">
+															<div class="modal-dialog">
+																<div class="modal-content">
+																	<div class="modal-header">
+																		<h5 class="modal-title"
+																			:id="'delRefModalLabel-'+indexRef">
+																			{{currentTranslations.delTableToCol}}
+																			{{Collection.getTableNameById(reference.ID)}}
+																		</h5>
+																		<button type="button" class="btn-close"
+																			data-bs-dismiss="modal"
+																			aria-label="Close"></button>
+																	</div>
+																	<div class="modal-body">
+																		{{currentTranslations.confirmDelTableToCol}}
+																		{{Collection.getTableNameById(reference.ID)}}?
+																	</div>
+																	<div class="modal-footer">
+																		<button type="button" class="btn btn-secondary"
+																			data-bs-dismiss="modal">{{currentTranslations.annulerLbl}}</button>
+																		<button type="button" class="btn btn-danger"
+																			data-bs-dismiss="modal"
+																			@click="item.deleteReference(reference)">{{currentTranslations.confirmLbl}}</button>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+
+					</div>
+				</div>
+	</main>
+
+	<footer class="footer mt-auto p-3 bg-body">
+		<div class="container">
+			<div class="row text-body-secondary user-select-none" id="footer">
+				<div class="col">
+					<span data-bs-toggle="tooltip" data-bs-title="Réalisé par"> {{currentTranslations.realiseLbl}} <code
+							class="user-select-all">myrhanda</code> <a :href="currentTranslations.beerWareLink"
+							target="_blank" rel="noopener noreferrer">
+							{{currentTranslations.beerWareLicenceLbl}}</a>.</span>
+				</div>
+
+				<div class="col text-end">
+					{{currentTranslations.version}} {{currentTranslations.numVersion}}
+				</div>
+			</div>
+		</div>
+	</footer>
+
+
+	<script src="./scripts/traduction.js"></script>
+	<script src="./scripts/collection.js"></script>
+	<script src="./scripts/creation.js"></script>
+
+</body>
+
+</html>

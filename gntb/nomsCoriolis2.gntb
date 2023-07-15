@@ -1,0 +1,975 @@
+{
+  "Collection": {
+    "tables": [
+      {
+        "nom": "nom famille",
+        "ID": "tab_nom_famille",
+        "lignes": [
+          {
+            "poids": 10,
+            "contenu": "Abadi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Abdallah"
+          },
+          {
+            "poids": 10,
+            "contenu": "Abdul-Rahman"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Haddad"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Farsi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Hakim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Jabiri"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Masri"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Mazrouei"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Qadi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Qasimi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Saadi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Sheikh"
+          },
+          {
+            "poids": 10,
+            "contenu": "Al-Zahid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Amiri"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ansari"
+          },
+          {
+            "poids": 10,
+            "contenu": "Azhar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Bahjat"
+          },
+          {
+            "poids": 10,
+            "contenu": "Bakr"
+          },
+          {
+            "poids": 10,
+            "contenu": "Bannani"
+          },
+          {
+            "poids": 10,
+            "contenu": "Barakat"
+          },
+          {
+            "poids": 10,
+            "contenu": "Bouazza"
+          },
+          {
+            "poids": 10,
+            "contenu": "Bouhafs"
+          },
+          {
+            "poids": 10,
+            "contenu": "Darwish"
+          },
+          {
+            "poids": 10,
+            "contenu": "Fahmy"
+          },
+          {
+            "poids": 10,
+            "contenu": "Faraj"
+          },
+          {
+            "poids": 10,
+            "contenu": "Farsi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Fawaz"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ghani"
+          },
+          {
+            "poids": 10,
+            "contenu": "Habib"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hakimi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hassoun"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hussain"
+          },
+          {
+            "poids": 10,
+            "contenu": "Jabbar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Jalal"
+          },
+          {
+            "poids": 10,
+            "contenu": "Jamali"
+          },
+          {
+            "poids": 10,
+            "contenu": "Jawad"
+          },
+          {
+            "poids": 10,
+            "contenu": "Kadhim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Karam"
+          },
+          {
+            "poids": 10,
+            "contenu": "Karimi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Khattab"
+          },
+          {
+            "poids": 10,
+            "contenu": "Khoury"
+          },
+          {
+            "poids": 10,
+            "contenu": "Khoury"
+          },
+          {
+            "poids": 10,
+            "contenu": "Kushner"
+          },
+          {
+            "poids": 10,
+            "contenu": "Laham"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mahmoud"
+          },
+          {
+            "poids": 10,
+            "contenu": "Makhlouf"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mansoor"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mazari"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mirza"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mohammad"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mousa"
+          },
+          {
+            "poids": 10,
+            "contenu": "Moussa"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mubarak"
+          },
+          {
+            "poids": 10,
+            "contenu": "Nader"
+          },
+          {
+            "poids": 10,
+            "contenu": "Najjar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Nassar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Nouri"
+          },
+          {
+            "poids": 10,
+            "contenu": "Obeid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Osman"
+          },
+          {
+            "poids": 10,
+            "contenu": "Qazi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Qureshi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rahman"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rashid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Saad"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sabri"
+          },
+          {
+            "poids": 10,
+            "contenu": "Saeed"
+          },
+          {
+            "poids": 10,
+            "contenu": "Said"
+          },
+          {
+            "poids": 10,
+            "contenu": "Salama"
+          },
+          {
+            "poids": 10,
+            "contenu": "Saleh"
+          },
+          {
+            "poids": 10,
+            "contenu": "Shalabi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Shehadeh"
+          },
+          {
+            "poids": 10,
+            "contenu": "Siddiqui"
+          },
+          {
+            "poids": 10,
+            "contenu": "Soufi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Taha"
+          },
+          {
+            "poids": 10,
+            "contenu": "Taleb"
+          },
+          {
+            "poids": 10,
+            "contenu": "Tariq"
+          },
+          {
+            "poids": 10,
+            "contenu": "Tohami"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zaidan"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zain"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zarif"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zayed"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zeid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zubair"
+          }
+        ]
+      },
+      {
+        "nom": "noms masculins",
+        "ID": "tab_prenom_m",
+        "lignes": [
+          {
+            "poids": 10,
+            "contenu": "Aamir"
+          },
+          {
+            "poids": 10,
+            "contenu": "Abbas"
+          },
+          {
+            "poids": 10,
+            "contenu": "Adil"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ahmad"
+          },
+          {
+            "poids": 10,
+            "contenu": "Akram"
+          },
+          {
+            "poids": 10,
+            "contenu": "Aladdin"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ali"
+          },
+          {
+            "poids": 10,
+            "contenu": "Amir"
+          },
+          {
+            "poids": 10,
+            "contenu": "Anwar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Aziz"
+          },
+          {
+            "poids": 10,
+            "contenu": "Bahram"
+          },
+          {
+            "poids": 10,
+            "contenu": "Bashir"
+          },
+          {
+            "poids": 10,
+            "contenu": "Bilal"
+          },
+          {
+            "poids": 10,
+            "contenu": "Dariush"
+          },
+          {
+            "poids": 10,
+            "contenu": "Dawood"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ehsan"
+          },
+          {
+            "poids": 10,
+            "contenu": "Emir"
+          },
+          {
+            "poids": 10,
+            "contenu": "Faisal"
+          },
+          {
+            "poids": 10,
+            "contenu": "Farid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Farouk"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ghazi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hakim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hassan"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hussein"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ibrahim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Imran"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ismail"
+          },
+          {
+            "poids": 10,
+            "contenu": "Jafar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Jamal"
+          },
+          {
+            "poids": 10,
+            "contenu": "Kamal"
+          },
+          {
+            "poids": 10,
+            "contenu": "Karim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Kasim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Khalid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Khalil"
+          },
+          {
+            "poids": 10,
+            "contenu": "Layth"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mahmoud"
+          },
+          {
+            "poids": 10,
+            "contenu": "Majid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mansoor"
+          },
+          {
+            "poids": 10,
+            "contenu": "Masoud"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mehdi"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mohammed"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mujtaba"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mustafa"
+          },
+          {
+            "poids": 10,
+            "contenu": "Nadir"
+          },
+          {
+            "poids": 10,
+            "contenu": "Nasir"
+          },
+          {
+            "poids": 10,
+            "contenu": "Omar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Pasha"
+          },
+          {
+            "poids": 10,
+            "contenu": "Qasim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rafiq"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rashid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rauf"
+          },
+          {
+            "poids": 10,
+            "contenu": "Reza"
+          },
+          {
+            "poids": 10,
+            "contenu": "Saad"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sadiq"
+          },
+          {
+            "poids": 10,
+            "contenu": "Saeed"
+          },
+          {
+            "poids": 10,
+            "contenu": "Salim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sami"
+          },
+          {
+            "poids": 10,
+            "contenu": "Shah"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sultan"
+          },
+          {
+            "poids": 10,
+            "contenu": "Tahir"
+          },
+          {
+            "poids": 10,
+            "contenu": "Tariq"
+          },
+          {
+            "poids": 10,
+            "contenu": "Umar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Wahid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Yahya"
+          },
+          {
+            "poids": 10,
+            "contenu": "Youssef"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zafar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zaid"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zain"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zubair"
+          }
+        ]
+      },
+      {
+        "titre": "noms feminins",
+        "ID": "tab_prenom_f",
+        "lignes": [
+          {
+            "poids": 10,
+            "contenu": "Aisha"
+          },
+          {
+            "poids": 10,
+            "contenu": "Alia"
+          },
+          {
+            "poids": 10,
+            "contenu": "Amira"
+          },
+          {
+            "poids": 10,
+            "contenu": "Amina"
+          },
+          {
+            "poids": 10,
+            "contenu": "Asma"
+          },
+          {
+            "poids": 10,
+            "contenu": "Aziza"
+          },
+          {
+            "poids": 10,
+            "contenu": "Basima"
+          },
+          {
+            "poids": 10,
+            "contenu": "Dalia"
+          },
+          {
+            "poids": 10,
+            "contenu": "Dunia"
+          },
+          {
+            "poids": 10,
+            "contenu": "Fatima"
+          },
+          {
+            "poids": 10,
+            "contenu": "Ghada"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hala"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hanan"
+          },
+          {
+            "poids": 10,
+            "contenu": "Hasna"
+          },
+          {
+            "poids": 10,
+            "contenu": "Jamila"
+          },
+          {
+            "poids": 10,
+            "contenu": "Kamilah"
+          },
+          {
+            "poids": 10,
+            "contenu": "Karima"
+          },
+          {
+            "poids": 10,
+            "contenu": "Laila"
+          },
+          {
+            "poids": 10,
+            "contenu": "Layla"
+          },
+          {
+            "poids": 10,
+            "contenu": "Lina"
+          },
+          {
+            "poids": 10,
+            "contenu": "Maha"
+          },
+          {
+            "poids": 10,
+            "contenu": "Malika"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mariam"
+          },
+          {
+            "poids": 10,
+            "contenu": "Maya"
+          },
+          {
+            "poids": 10,
+            "contenu": "Mona"
+          },
+          {
+            "poids": 10,
+            "contenu": "Nadia"
+          },
+          {
+            "poids": 10,
+            "contenu": "Najwa"
+          },
+          {
+            "poids": 10,
+            "contenu": "Nasira"
+          },
+          {
+            "poids": 10,
+            "contenu": "Noor"
+          },
+          {
+            "poids": 10,
+            "contenu": "Noura"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rabia"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rahma"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rana"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rania"
+          },
+          {
+            "poids": 10,
+            "contenu": "Razia"
+          },
+          {
+            "poids": 10,
+            "contenu": "Reem"
+          },
+          {
+            "poids": 10,
+            "contenu": "Rim"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sabah"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sahar"
+          },
+          {
+            "poids": 10,
+            "contenu": "Saida"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sana"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sara"
+          },
+          {
+            "poids": 10,
+            "contenu": "Selma"
+          },
+          {
+            "poids": 10,
+            "contenu": "Shadia"
+          },
+          {
+            "poids": 10,
+            "contenu": "Shahrazad"
+          },
+          {
+            "poids": 10,
+            "contenu": "Shaima"
+          },
+          {
+            "poids": 10,
+            "contenu": "Shakira"
+          },
+          {
+            "poids": 10,
+            "contenu": "Shamsa"
+          },
+          {
+            "poids": 10,
+            "contenu": "Sofia"
+          },
+          {
+            "poids": 10,
+            "contenu": "Soraya"
+          },
+          {
+            "poids": 10,
+            "contenu": "Suhayla"
+          },
+          {
+            "poids": 10,
+            "contenu": "Tahira"
+          },
+          {
+            "poids": 10,
+            "contenu": "Yara"
+          },
+          {
+            "poids": 10,
+            "contenu": "Yasmin"
+          },
+          {
+            "poids": 10,
+            "contenu": "Yusra"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zahra"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zainab"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zara"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zaynab"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zeynep"
+          },
+          {
+            "poids": 10,
+            "contenu": "Zahrah"
+          }
+        ],
+        "nom": "noms féminins"
+      }
+    ],
+    "sequences": [
+      {
+        "nom": "Noms masculins",
+        "description": "Noms masculins pour Coriolis",
+        "items": [
+          {
+            "titre": "Prénom",
+            "references": [
+              {
+                "ID": "tab_prenom_m",
+                "min": 1,
+                "max": 1,
+                "poids": 10
+              }
+            ]
+          },
+          {
+            "titre": "Nom",
+            "references": [
+              {
+                "ID": "tab_nom_famille",
+                "min": 1,
+                "max": 1,
+                "poids": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "nom": "Noms féminins",
+        "description": "Noms féminins pour Coriolis",
+        "items": [
+          {
+            "titre": "Prénom",
+            "references": [
+              {
+                "ID": "tab_prenom_f",
+                "min": 1,
+                "max": 1,
+                "poids": 10
+              }
+            ]
+          },
+          {
+            "titre": "Nom",
+            "references": [
+              {
+                "ID": "tab_nom_famille",
+                "min": 1,
+                "max": 1,
+                "poids": 10
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "nom": "Noms mixtes",
+        "description": "Noms mixtes pour Coriolis",
+        "items": [
+          {
+            "titre": "Prénom",
+            "references": [
+              {
+                "ID": "tab_prenom_m",
+                "min": 1,
+                "max": 1,
+                "poids": 10
+              },
+              {
+                "ID": "tab_prenom_f",
+                "min": 1,
+                "max": 1,
+                "poids": 10
+              }
+            ]
+          },
+          {
+            "titre": "Nom",
+            "references": [
+              {
+                "ID": "tab_nom_famille",
+                "min": 1,
+                "max": 1,
+                "poids": 10
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "titre": "noms coriolis",
+    "description": "fichier test de generation de noms pour le jeu coriolis"
+  }
+}

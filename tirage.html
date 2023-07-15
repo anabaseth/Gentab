@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" class="h-100" data-bs-theme="auto">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="application-name" content="Gentab">
+	<meta name="description" content="Outil de génération aléatoire">
+	<meta name="version" content="2.0 b">
+	<meta name="revision" content="2023-06-16">
+	<meta name="author" content="Myrhanda">
+	<meta name="contact" content="Myrhanda#6802 on Discord">
+	<meta name="license" content="MIT - beerware">
+	<meta name="color-scheme" content="light dark" />
+	<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F9FA" />
+	<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2B3035" />
+
+	<meta property="og:title" content="Tirage">
+	<meta property="og:description" content="Outil de génération aléatoire">
+	<meta property="og:type" content="website">
+	<title>Tirage</title>
+	
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10/font/bootstrap-icons.min.css">
+</head>
+
+<body class="d-flex flex-column h-100 bg-body-tertiary">
+	<main class="flex-shrink-0">
+		<div class="container pt-4 pb-5" id="app">
+			<h1 class="display-1 text-center">{{currentTranslations.titre}}</h1>
+			<p class="my-0 lead text-center">{{currentTranslations.sousTitre}}</p>
+			<div class=" position-absolute top-0 end-0 m-4">
+				
+				<ul class="nav">
+					<li class="nav-item" v-for="lg of langues">
+						<button @click="changeLangue(lg)" class="btn btn-outline-secondary">
+							<i >{{lg}}</i>
+						</button>	
+					</li>
+					<li class="nav-item">
+						<button id="theme" class="btn btn-outline-secondary" @click="setTheme">
+							<i class="bi bi-lightbulb"></i>
+						</button>
+					</li>
+				  </ul>
+			</div>
+
+			<div class="container">
+				<div class=" text-center p-0">
+					<div class="container">
+						<div class="row">
+							<div class="col-6 card">
+								<div class="col-12 py-5 position-relative">
+									<h2>{{currentTranslations.selectCollection}}</h2>
+									<form id="load-form">
+										<i class="bi bi-cloud-upload display-2 text-primary"></i>
+										<label for="fileInput" class="btn btn-primary stretched-link">{{currentTranslations.selectFileLbl}}</label>
+										<input id="fileInput" class="position-absolute invisible"
+											@change="handleFileChange" type="file" accept=".gntb">
+									</form>
+								</div>
+							</div>
+							<div class="col-6 card">
+								<div class="col-12 py-5 position-relative">
+									<div class="mb-3">
+										<h2>{{currentTranslations.sequenceTab}}</h2>
+										<div class="form-floating">
+											<select v-if="Collection" class="form-select" v-model="sequence"
+												aria-label="Sélectionner un tirage" id="i_Sequence"
+												:disabled="!Collection">
+												<option :value="null">{{currentTranslations.selectSequence}}.</option>
+												<option v-for="seq in Collection.sequences" :value="seq">{{ seq.nom }}
+												</option>
+											</select>
+											<label for="i_Sequence" class="form-label">{{currentTranslations.sequenceLbl}} </label>
+										</div>
+										<div class="form-floating input-group">
+											<input type="number" id="nombreTirage" v-model="nbrTirages" value=1 min=1
+												class="form-control"><label class="form-label" for="nombreTirage">{{currentTranslations.nbrTirageLbl}} :</label>
+											<button class="btn btn-primary form-control" id="btn_tirage"
+												:disabled="!sequence" @click="tirage()">{{nbrTirages}} {{currentTranslations.tiragesLbl}}</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row card ">
+							<div class="col-12 py-5 position-relative" v-if="resultat" >
+								<div class="mb-3"  id="resultTab">
+									<div class="form-floating">
+										<div class="row">
+											<div id="dResultat">
+												<h2>{{Collection.titre}}: {{sequence.nom}}</h2>
+											</div>
+											<table class="table table-dark table-striped">
+												<thead>
+													<tr>
+														<th scope="col">#</th>
+														<th v-for="(titre, index) in resultat.titres">{{titre}}</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr v-for="(ligne, index) in resultat.lignes">
+														<th scope="row">{{index + 1}} </th>
+														<td v-for="(colonne, index) in ligne.colonnes">
+															<!--{{colonne.nbr}} resultats-->
+															<ul class="list-group">
+																<li v-for="(contenu, index) in colonne.contenu"
+																	class="list-group-item">
+																	{{contenu}}
+																</li>
+															</ul>
+														</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	</main>
+
+	<footer class="footer mt-auto p-3 bg-body">
+		<div class="container">
+			<div class="row text-body-secondary user-select-none" id="footer">
+				<div class="col">
+					<span data-bs-toggle="tooltip" data-bs-title="Réalisé par"> {{currentTranslations.realiseLbl}} <code
+							class="user-select-all">myrhanda</code> <a :href="currentTranslations.beerWareLink"
+							target="_blank" rel="noopener noreferrer">
+							{{currentTranslations.beerWareLicenceLbl}}</a>.</span>
+				</div>
+
+				<div class="col text-end">
+					{{currentTranslations.version}} {{currentTranslations.numVersion}}
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Inclusion des fichiers JavaScript de Vue.js et Bootstrap -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="./scripts/traduction.js"></script>
+	<script src="./scripts/tirage.js">
+
+	</script>
+
+</body>
+
+</html>
