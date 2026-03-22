@@ -7,7 +7,7 @@ Un outil de génération aléatoire pour maîtres de jeu et créateurs de conten
 ## 🚀 Accès direct
 
 **Utilisez Gentab directement dans votre navigateur :**
-https://anabaseth.github.io/gentab/
+https://anabaseth.github.io/Gentab/gentab.html
 
 
 ## 📋 Fonctionnalités
