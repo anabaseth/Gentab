@@ -1,53 +1,107 @@
-# Gentab v3 — Guide utilisateur
+# Gentab v3 - Outil de génération aléatoire
 
-> Votre générateur de tables aléatoires — guide d'utilisation
+[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://votre-nom-utilisateur.github.io/gentab-v3/)
+
+Un outil de génération aléatoire pour maîtres de jeu et créateurs de contenu.
+
+## 🚀 Accès direct
+
+**Utilisez Gentab directement dans votre navigateur :**
+https://votre-nom-utilisateur.github.io/gentab-v3/
+
+*Remplacez `votre-nom-utilisateur` par votre nom d'utilisateur GitHub*
+
+## 📋 Fonctionnalités
+
+- **Tirage aléatoire** : Tables pondérées avec combinaisons uniques
+- **Éditeur intégré** : Créez vos propres tables et séquences
+- **Séquences imbriquées** : Références entre séquences
+- **Détection de cycles** : Gestion automatique des références circulaires
+- **Graphe de dépendances** : Visualisation des relations entre séquences
+- **Internationalisation** : Support français/anglais
+- **Accessibilité** : Navigation clavier et labels ARIA
+
+## 🛠️ Installation locale
+
+1. Clonez le repository :
+   ```bash
+   git clone https://github.com/votre-nom-utilisateur/gentab-v3.git
+   cd gentab-v3
+   ```
+
+2. Ouvrez `gentab.html` dans votre navigateur
+
+## 📖 Documentation
+
+- [Guide utilisateur complet](README_guide_utilisateur.md)
+- [Documentation technique](README_technique.md)
+
+## 🔧 Configuration GitHub Pages
+
+Pour permettre l'accès direct à votre application :
+
+1. **Poussez votre code** sur GitHub dans un repository public
+2. **Allez dans Settings > Pages**
+3. **Source** : "Deploy from a branch"
+4. **Branch** : `main` / `(root)`
+5. **Sauvegardez**
+
+Votre site sera accessible à : `https://votre-nom-utilisateur.github.io/nom-du-repo/`
+
+## 🎮 Démarrage rapide
+
+1. **Accès direct** : https://votre-nom-utilisateur.github.io/gentab-v3/
+2. **Chargez un fichier** : Bouton "Charger" > sélectionnez un `.gntb`
+3. **Choisissez une séquence** : Liste déroulante dans l'onglet "Tirer"
+4. **Lancez le tirage** : Nombre de résultats souhaité
+
+## 📄 Format .gntb
+
+Fichiers JSON avec tables et séquences :
+
+```json
+{
+  "titre": "Mon générateur",
+  "tables": [
+    {
+      "id": "prenoms",
+      "nom": "Prénoms",
+      "lignes": [
+        {"contenu": "Alice", "poids": 10},
+        {"contenu": "Bob", "poids": 8}
+      ]
+    }
+  ],
+  "sequences": [
+    {
+      "id": "personnage",
+      "nom": "Personnage aléatoire",
+      "items": [
+        {
+          "titre": "Prénom",
+          "references": [{"ID": "tbl:prenoms", "poids": 10, "min": 1, "max": 1}]
+        }
+      ]
+    }
+  ]
+}
+```
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+
+- Ouvrir une issue pour signaler un bug
+- Proposer une amélioration via une pull request
+- Partager vos fichiers `.gntb` dans la communauté
+
+## 📜 Licence
+
+Beerware License - Voir [README_technique.md](README_technique.md) pour les détails.
 
 ---
 
-## Table des matières
-
-- [C'est quoi Gentab ?](#cest-quoi-gentab-)
-- [Démarrer en 3 minutes](#démarrer-en-3-minutes)
-- [Tables et séquences](#tables-et-séquences)
-- [Les poids](#les-poids)
-- [Colonnes multiples](#colonnes-multiples)
-- [Créer une table](#créer-une-table)
-- [Créer une séquence](#créer-une-séquence)
-- [Plusieurs références dans un item](#plusieurs-références-dans-un-item)
-- [Séquences imbriquées](#séquences-imbriquées)
-- [Sauvegarder votre fichier](#sauvegarder-votre-fichier)
-- [Faire un tirage](#faire-un-tirage)
-- [Lire les résultats](#lire-les-résultats)
-- [Conseils pratiques](#conseils-pratiques)
-- [Questions fréquentes](#questions-fréquentes)
-
----
-
-## C'est quoi Gentab ?
-
-Gentab est un outil pour **créer et lancer des tables aléatoires**. Vous définissez des listes de contenus (noms, objets, lieux, descriptions…), vous indiquez la probabilité de chaque entrée, et Gentab tire des combinaisons aléatoires pour vous.
-
-Idéal pour les maîtres de jeu de rôle, les auteurs, les créateurs de contenu — ou simplement pour quiconque a besoin de générer des résultats aléatoires à partir de listes personnalisées.
-
-| | |
-|---|---|
-| 📋 **Vos données** | Vous créez des **tables** (listes de valeurs avec des poids) et des **séquences** (combinaisons de tables). |
-| 💾 **Vos fichiers** | Tout est sauvegardé dans un fichier `.gntb` sur votre ordinateur. Aucun compte, aucun serveur, aucune connexion requise. |
-| ⚄ **Vos tirages** | Choisissez une séquence, un nombre de tirages, et obtenez un tableau de résultats uniques en un clic. |
-| 🌐 **Partout, hors ligne** | Gentab est un seul fichier HTML. Ouvrez-le dans votre navigateur, même sans connexion internet. Partagez-le à vos joueurs. |
-
----
-
-## Démarrer en 3 minutes
-
-### Utiliser un fichier .gntb existant
-
-1. **Ouvrez Gentab** — double-cliquez sur `gentab.html`, il s'ouvre dans votre navigateur.
-2. **Chargez votre fichier** — cliquez sur **Charger** (en haut de la page) et sélectionnez votre fichier `.gntb`.
-3. **Choisissez une séquence** — sélectionnez la séquence souhaitée dans la liste déroulante de l'onglet **⚄ Tirer**.
-4. **Lancez les dés !** — indiquez le nombre de résultats voulus et cliquez sur **⚄ Tirer**.
-
-### Créer votre premier fichier
+*Gentab v3 — Outil de génération aléatoire — Mars 2026*
 
 1. **Basculez sur l'onglet Éditer** — cliquez sur **✎ Éditer**, puis sur **Nouveau**.
 2. **Créez vos tables** — cliquez sur **＋** à côté de « Tables », donnez un nom à votre table et ajoutez vos entrées avec leurs poids.
