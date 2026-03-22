@@ -1,15 +1,14 @@
 # Gentab v3 - Outil de génération aléatoire
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://anabaseth.github.io/gentab-v3/)
+[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://anabaseth.github.io/gentab/)
 
 Un outil de génération aléatoire pour maîtres de jeu et créateurs de contenu.
 
 ## 🚀 Accès direct
 
 **Utilisez Gentab directement dans votre navigateur :**
-https://anabaseth.github.io/gentab-v3/
+https://anabaseth.github.io/gentab/
 
-*Remplacez `anabaseth` par votre nom d'utilisateur GitHub*
 
 ## 📋 Fonctionnalités
 
@@ -25,8 +24,8 @@ https://anabaseth.github.io/gentab-v3/
 
 1. Clonez le repository :
    ```bash
-   git clone https://github.com/anabaseth/gentab-v3.git
-   cd gentab-v3
+   git clone https://github.com/anabaseth/gentab.git
+   cd gentab
    ```
 
 2. Ouvrez `gentab.html` dans votre navigateur
@@ -50,7 +49,7 @@ Votre site sera accessible à : `https://anabaseth.github.io/nom-du-repo/`
 
 ## 🎮 Démarrage rapide
 
-1. **Accès direct** : https://anabaseth.github.io/gentab-v3/
+1. **Accès direct** : https://anabaseth.github.io/gentab/
 2. **Chargez un fichier** : Bouton "Charger" > sélectionnez un `.gntb`
 3. **Choisissez une séquence** : Liste déroulante dans l'onglet "Tirer"
 4. **Lancez le tirage** : Nombre de résultats souhaité
