@@ -1,0 +1,281 @@
+{
+  "titre": "test",
+  "description": "",
+  "tables": [
+    {
+      "id": "objet",
+      "nom": "Objet",
+      "lignes": [
+        {
+          "contenu": "Épée",
+          "poids": 10
+        },
+        {
+          "contenu": "Bouclier",
+          "poids": 10
+        },
+        {
+          "contenu": "Arc",
+          "poids": 8
+        },
+        {
+          "contenu": "Armure",
+          "poids": 6
+        },
+        {
+          "contenu": "Potion",
+          "poids": 4
+        },
+        {
+          "contenu": "Artefact ancien",
+          "poids": 2
+        }
+      ]
+    },
+    {
+      "id": "couleur",
+      "nom": "Couleur",
+      "lignes": [
+        {
+          "contenu": "Rouge",
+          "poids": 5
+        },
+        {
+          "contenu": "Bleu",
+          "poids": 5
+        },
+        {
+          "contenu": "Vert",
+          "poids": 5
+        },
+        {
+          "contenu": "Noir",
+          "poids": 5
+        },
+        {
+          "contenu": "Or",
+          "poids": 3
+        },
+        {
+          "contenu": "Argenté",
+          "poids": 2
+        }
+      ]
+    },
+    {
+      "id": "materiau",
+      "nom": "Matériau",
+      "lignes": [
+        {
+          "contenu": "Fer",
+          "poids": 10
+        },
+        {
+          "contenu": "Acier",
+          "poids": 8
+        },
+        {
+          "contenu": "Bronze",
+          "poids": 5
+        },
+        {
+          "contenu": "Mithril",
+          "poids": 3
+        },
+        {
+          "contenu": "Adamantium",
+          "poids": 1
+        }
+      ]
+    },
+    {
+      "id": "lieu",
+      "nom": "Lieu",
+      "lignes": [
+        {
+          "contenu": "Donjon",
+          "poids": 8
+        },
+        {
+          "contenu": "Forêt",
+          "poids": 8
+        },
+        {
+          "contenu": "Taverne",
+          "poids": 6
+        },
+        {
+          "contenu": "Château",
+          "poids": 4
+        },
+        {
+          "contenu": "Marché",
+          "poids": 3
+        },
+        {
+          "contenu": "Plan astral",
+          "poids": 1
+        }
+      ]
+    },
+    {
+      "id": "personnage",
+      "nom": "Personnage",
+      "lignes": [
+        {
+          "contenu": "Guerrier",
+          "poids": 8
+        },
+        {
+          "contenu": "Mage",
+          "poids": 7
+        },
+        {
+          "contenu": "Voleur",
+          "poids": 6
+        },
+        {
+          "contenu": "Paladin",
+          "poids": 5
+        },
+        {
+          "contenu": "Nécromancien",
+          "poids": 3
+        },
+        {
+          "contenu": "Demi-dieu",
+          "poids": 1
+        }
+      ]
+    }
+  ],
+  "sequences": [
+    {
+      "id": "seq_0",
+      "nom": "Butin de rencontre",
+      "description": "Génère un objet avec sa couleur et son matériau",
+      "items": [
+        {
+          "titre": "Type d'objet",
+          "references": [
+            {
+              "ID": "tbl:objet",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "titre": "Aspect",
+          "references": [
+            {
+              "ID": "tbl:couleur",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "titre": "Composition",
+          "references": [
+            {
+              "ID": "tbl:materiau",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seq_1",
+      "nom": "Scène aléatoire",
+      "description": "Un personnage rencontré quelque part",
+      "items": [
+        {
+          "titre": "Qui ?",
+          "references": [
+            {
+              "ID": "tbl:personnage",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "titre": "Où ?",
+          "references": [
+            {
+              "ID": "tbl:lieu",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seq_2",
+      "nom": "Rencontre complète",
+      "description": "Personnage, lieu et objet trouvé",
+      "items": [
+        {
+          "titre": "Personnage",
+          "references": [
+            {
+              "ID": "tbl:personnage",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "titre": "Lieu",
+          "references": [
+            {
+              "ID": "tbl:lieu",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "seq_3",
+      "nom": "Nouvelle séquence",
+      "description": "",
+      "items": [
+        {
+          "titre": "tagada",
+          "references": [
+            {
+              "ID": "tbl:materiau",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        },
+        {
+          "titre": "frefre",
+          "references": [
+            {
+              "ID": "seq:seq_2",
+              "poids": 10,
+              "min": 1,
+              "max": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

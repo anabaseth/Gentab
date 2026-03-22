@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gentab v3 — Documentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --blue-dark:  #1E3A5F;
+    --blue-mid:   #2E6DA4;
+    --blue-light: #D6E4F0;
+    --blue-pale:  #EBF4FB;
+    --white:      #FFFFFF;
+    --grey-bg:    #F4F7FA;
+    --grey-text:  #555E6D;
+    --grey-border:#CCCCCC;
+    --red:        #C00000;
+    --amber:      #E07B00;
+    --green:      #1A6B2A;
+    --purple:     #5B2D8E;
+    --radius:     6px;
+    --code-bg:    #1E2535;
+    --code-text:  #CDD6F4;
+    --code-key:   #89B4FA;
+    --code-str:   #A6E3A1;
+    --code-num:   #FAB387;
+    --code-cmt:   #6C7086;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', system-ui, sans-serif;
+    background: var(--grey-bg);
+    color: var(--blue-dark);
+    line-height: 1.7;
+    font-size: 15px;
+  }
+
+  /* ── LAYOUT ── */
+  .page { display: flex; min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  nav.sidebar {
+    width: 260px; flex-shrink: 0;
+    background: var(--blue-dark);
+    padding: 32px 0;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto;
+  }
+  .nav-logo {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+  }
+  .nav-logo h1 {
+    font-size: 1.6rem; font-weight: 700; color: #fff;
+    letter-spacing: 0.06em;
+  }
+  .nav-logo h1 span { font-size: 0.55em; font-weight: 300;
+    color: var(--blue-light); vertical-align: super; margin-left: 3px; }
+  .nav-logo p { font-size: 0.75rem; color: rgba(214,228,240,0.6);
+    font-style: italic; margin-top: 4px; font-family: 'Lora', serif; }
+
+  .nav-section { padding: 0 16px; margin-bottom: 8px; }
+  .nav-section-title {
+    font-size: 0.6rem; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: rgba(214,228,240,0.4);
+    padding: 8px 8px 4px;
+  }
+  .nav-section a {
+    display: block; padding: 6px 12px; border-radius: var(--radius);
+    color: rgba(214,228,240,0.75); text-decoration: none;
+    font-size: 0.85rem; transition: all 0.15s;
+  }
+  .nav-section a:hover, .nav-section a.active {
+    background: rgba(255,255,255,0.1); color: #fff;
+  }
+  .nav-section a.active { border-left: 3px solid var(--blue-light); padding-left: 9px; }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    flex: 1; padding: 48px 56px 80px;
+    max-width: 860px;
+  }
+
+  /* ── HEADINGS ── */
+  h1.page-title {
+    font-size: 2.4rem; font-weight: 700; color: var(--blue-dark);
+    letter-spacing: 0.04em; margin-bottom: 8px;
+  }
+  h1.page-title span { color: var(--blue-mid); }
+  .page-lead {
+    font-family: 'Lora', serif; font-style: italic;
+    color: var(--grey-text); font-size: 1.05rem; margin-bottom: 40px;
+    padding-bottom: 32px; border-bottom: 2px solid var(--blue-light);
+  }
+
+  h2 {
+    font-size: 1.45rem; font-weight: 700; color: var(--blue-dark);
+    margin: 48px 0 16px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--blue-light);
+  }
+  h2::before { content: ''; display: inline-block; width: 4px; height: 1.2em;
+    background: var(--blue-mid); border-radius: 2px;
+    vertical-align: middle; margin-right: 10px; }
+
+  h3 {
+    font-size: 1.1rem; font-weight: 600; color: var(--blue-mid);
+    margin: 28px 0 10px;
+  }
+  h4 {
+    font-size: 0.9rem; font-weight: 700; color: var(--grey-text);
+    text-transform: uppercase; letter-spacing: 0.1em; margin: 20px 0 8px;
+  }
+
+  p { margin-bottom: 14px; color: var(--grey-text); }
+  strong { color: var(--blue-dark); font-weight: 600; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: var(--radius); padding: 14px 18px;
+    margin: 18px 0; font-size: 0.92rem; border-left: 4px solid;
+  }
+  .callout.info    { background: var(--blue-pale); border-color: var(--blue-mid); color: var(--blue-dark); }
+  .callout.warn    { background: #FFF8E7; border-color: var(--amber); color: #6B4200; }
+  .callout.tip     { background: #EFF8EF; border-color: var(--green); color: #1A3D1A; }
+  .callout.purple  { background: var(--purple-pale,#F0EAF8); border-color: var(--purple); color: #3A1A5A; }
+  .callout strong  { color: inherit; }
+  .callout-icon    { font-size: 1rem; margin-right: 6px; }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: var(--code-bg);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.82rem;
+    line-height: 1.65;
+    color: var(--code-text);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  pre .key   { color: var(--code-key); }
+  pre .str   { color: var(--code-str); }
+  pre .num   { color: var(--code-num); }
+  pre .cmt   { color: var(--code-cmt); font-style: italic; }
+  pre .punc  { color: #BAC2DE; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82em;
+    background: var(--blue-pale);
+    color: var(--blue-dark);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--blue-light);
+  }
+  pre code { background: none; border: none; padding: 0; font-size: inherit; color: inherit; }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; margin: 16px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  thead th {
+    background: var(--blue-dark); color: #fff;
+    padding: 10px 16px; text-align: left;
+    font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  tbody td { padding: 9px 16px; border-bottom: 1px solid var(--blue-light);
+    color: var(--grey-text); vertical-align: top; }
+  tbody tr:nth-child(even) td { background: var(--blue-pale); }
+  tbody tr:hover td { background: var(--blue-light); }
+  td code { font-size: 0.8em; }
+
+  /* ── FIELD CARDS ── */
+  .field-list { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .field-card {
+    border: 1px solid var(--grey-border); border-radius: var(--radius);
+    padding: 12px 16px; background: var(--white);
+  }
+  .field-card .field-name { font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem; font-weight: 600; color: var(--blue-mid); }
+  .field-card .field-type { font-size: 0.72rem; background: var(--blue-pale);
+    color: var(--blue-dark); padding: 1px 7px; border-radius: 10px;
+    margin-left: 8px; font-weight: 600; letter-spacing: 0.05em; }
+  .field-card .field-required { font-size: 0.72rem; background: rgba(192,0,0,0.1);
+    color: var(--red); padding: 1px 7px; border-radius: 10px;
+    margin-left: 4px; font-weight: 600; }
+  .field-card .field-optional { font-size: 0.72rem; background: rgba(26,107,42,0.1);
+    color: var(--green); padding: 1px 7px; border-radius: 10px;
+    margin-left: 4px; font-weight: 600; }
+  .field-card .field-desc { font-size: 0.88rem; color: var(--grey-text);
+    margin-top: 6px; }
+
+  /* ── LISTS ── */
+  ul, ol { padding-left: 24px; margin-bottom: 14px; color: var(--grey-text); }
+  li { margin-bottom: 6px; }
+  li strong { color: var(--blue-dark); }
+
+  /* ── SECTION ANCHOR ── */
+  .section { scroll-margin-top: 24px; }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-block; font-size: 0.7rem; font-weight: 700;
+    padding: 2px 10px; border-radius: 20px; letter-spacing: 0.05em;
+    vertical-align: middle; margin-left: 6px;
+  }
+  .badge.v1 { background: rgba(224,123,0,0.15); color: var(--amber); border: 1px solid rgba(224,123,0,0.3); }
+  .badge.v2 { background: var(--blue-pale); color: var(--blue-mid); border: 1px solid var(--blue-light); }
+  .badge.new { background: rgba(26,107,42,0.1); color: var(--green); border: 1px solid rgba(26,107,42,0.3); }
+
+  /* ── EXAMPLE RESULT ── */
+  .result-table { font-size: 0.85rem; }
+  .result-table thead th { background: var(--blue-dark); }
+  .result-table td { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 24px; font-size: 0.7rem;
+    color: var(--grey-text); letter-spacing: 0.1em; text-transform: uppercase;
+    border-top: 1px solid var(--grey-border); margin-top: 40px;
+  }
+
+  @media (max-width: 900px) {
+    nav.sidebar { display: none; }
+    main { padding: 28px 20px 60px; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar" aria-label="Navigation documentation">
+  <div class="nav-logo">
+    <h1>Gentab<span>v3</span></h1>
+    <p>Documentation</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Démarrage</div>
+    <a href="#intro">Introduction</a>
+    <a href="#quickstart">Démarrage rapide</a>
+    <a href="#formats">Formats supportés</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Format .gntb</div>
+    <a href="#structure">Structure racine</a>
+    <a href="#tables">Tables</a>
+    <a href="#sequences">Séquences</a>
+    <a href="#items">Items &amp; Références</a>
+    <a href="#prefixes">Préfixes tbl: / seq:</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Fonctionnement</div>
+    <a href="#tirage">Algorithme de tirage</a>
+    <a href="#imbrication">Séquences imbriquées</a>
+    <a href="#boucles">Boucles circulaires</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Exemples</div>
+    <a href="#exemple-simple">Fichier simple</a>
+    <a href="#exemple-avance">Fichier avancé</a>
+    <a href="#exemple-seq">Séquences imbriquées</a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Référence</div>
+    <a href="#schema">Schéma complet</a>
+    <a href="#retrocompat">Rétrocompatibilité v1</a>
+    <a href="#validation">Règles de validation</a>
+    <a href="#licence">Licence</a>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main>
+
+  <h1 class="page-title">Gentab <span>v3</span></h1>
+  <p class="page-lead">
+    Documentation complète du format de fichier <code>.gntb</code> et du fonctionnement
+    de l'outil de génération aléatoire pondérée.
+  </p>
+
+  <!-- ── INTRO ── -->
+  <section class="section" id="intro">
+    <h2>Introduction</h2>
+    <p>
+      <strong>Gentab v3</strong> est un outil de génération aléatoire pondérée. Il lit des fichiers
+      <code>.gntb</code> — des fichiers JSON décrivant des <em>tables</em> de valeurs et des
+      <em>séquences</em> qui orchestrent des tirages dans ces tables — et produit des combinaisons
+      aléatoires selon les probabilités définies.
+    </p>
+    <p>
+      L'application est un fichier HTML unique (<code>gentab.html</code>), sans dépendance externe,
+      utilisable directement dans un navigateur, hors ligne.
+    </p>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <strong>Cas d'usage typiques :</strong> générateurs de noms de PNJ pour jeux de rôle,
+      tables de butins, rencontres aléatoires, générateurs de descriptions, oracles narratifs…
+      Tout ce qui nécessite des tirages pondérés sur des listes de contenu.
+    </div>
+  </section>
+
+  <!-- ── QUICKSTART ── -->
+  <section class="section" id="quickstart">
+    <h2>Démarrage rapide</h2>
+
+    <h3>Utiliser Gentab v3</h3>
+    <ol>
+      <li>Ouvrez <code>gentab.html</code> dans votre navigateur (double-clic).</li>
+      <li>Cliquez sur <strong>Charger</strong> et sélectionnez un fichier <code>.gntb</code>.</li>
+      <li>Choisissez une <strong>séquence</strong> dans la liste déroulante.</li>
+      <li>Définissez le <strong>nombre de tirages</strong> souhaité.</li>
+      <li>Cliquez sur <strong>⚄ Tirer</strong>.</li>
+    </ol>
+
+    <h3>Créer un fichier .gntb</h3>
+    <ol>
+      <li>Basculez sur l'onglet <strong>✎ Éditer</strong>.</li>
+      <li>Cliquez sur <strong>Nouveau</strong> ou <strong>Ouvrir</strong> pour partir d'un fichier existant.</li>
+      <li>Créez vos tables, ajoutez des lignes avec leurs poids.</li>
+      <li>Créez vos séquences, ajoutez des items et des références vers vos tables.</li>
+      <li>Cliquez sur <strong>Enregistrer</strong> pour télécharger le fichier <code>.gntb</code>.</li>
+    </ol>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ</span>
+      Un fichier <code>.gntb</code> est du <strong>JSON standard</strong> avec l'extension
+      <code>.gntb</code>. Il peut être créé et modifié avec n'importe quel éditeur de texte.
+    </div>
+  </section>
+
+  <!-- ── FORMATS ── -->
+  <section class="section" id="formats">
+    <h2>Formats supportés</h2>
+    <p>Gentab v3 lit deux formats de fichier <code>.gntb</code> :</p>
+
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Format</th><th>Structure racine</th><th>Usage</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>v1</strong> <span class="badge v1">legacy</span></td>
+          <td><code>{ "Collection": { "tables": [...], "sequences": [...] } }</code></td>
+          <td>Fichiers créés par les versions précédentes de Gentab</td>
+        </tr>
+        <tr>
+          <td><strong>v2</strong> <span class="badge v2">actuel</span></td>
+          <td><code>{ "tables": [...], "sequences": [...] }</code></td>
+          <td>Format produit par Gentab Editor. Recommandé pour les nouveaux fichiers</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      L'application détecte automatiquement le format et normalise les différences de nommage
+      (<code>ID</code>/<code>id</code>, <code>nom</code>/<code>name</code>).
+      Le format v1 est intégralement supporté en lecture, sans aucune modification nécessaire.
+    </p>
+  </section>
+
+  <!-- ── STRUCTURE ── -->
+  <section class="section" id="structure">
+    <h2>Structure racine</h2>
+    <p>Un fichier <code>.gntb</code> v2 contient les champs suivants à la racine :</p>
+
+    <div class="field-list">
+      <div class="field-card">
+        <span class="field-name">titre</span>
+        <span class="field-type">string</span>
+        <span class="field-optional">optionnel</span>
+        <p class="field-desc">Nom de la collection, affiché dans l'éditeur. Non utilisé lors du tirage.</p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">description</span>
+        <span class="field-type">string</span>
+        <span class="field-optional">optionnel</span>
+        <p class="field-desc">Description libre de la collection.</p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">tables</span>
+        <span class="field-type">array</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">Tableau d'objets Table. Peut être vide si la collection ne contient que des séquences imbriquées.</p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">sequences</span>
+        <span class="field-type">array</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">Tableau d'objets Séquence. Doit contenir au moins une séquence pour que le tirage soit possible.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TABLES ── -->
+  <section class="section" id="tables">
+    <h2>Tables</h2>
+    <p>
+      Une <strong>Table</strong> est une liste de valeurs textuelles, chacune associée à un
+      <em>poids</em> qui détermine sa probabilité d'être tirée. Plus le poids est élevé,
+      plus la valeur a de chances d'être sélectionnée.
+    </p>
+
+    <div class="field-list">
+      <div class="field-card">
+        <span class="field-name">id</span>
+        <span class="field-type">string</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">
+          Identifiant unique de la table. Utilisé dans les références des séquences.
+          L'éditeur génère automatiquement des UUID v4 (ex. <code>04b997b1-7908-4e47-bed1-c5cd46da3206</code>).
+          Vous pouvez utiliser n'importe quelle chaîne unique (ex. <code>"prenoms-masculins"</code>).
+        </p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">nom</span>
+        <span class="field-type">string</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">Nom affiché comme en-tête de colonne dans le tableau de résultats.</p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">lignes</span>
+        <span class="field-type">array</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">Tableau d'objets <code>{ contenu, poids }</code>. Doit contenir au moins une entrée.</p>
+      </div>
+    </div>
+
+    <h4>Structure d'une ligne</h4>
+    <div class="field-list">
+      <div class="field-card">
+        <span class="field-name">contenu</span>
+        <span class="field-type">string</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">Valeur affichée lors d'un tirage. Peut contenir n'importe quel texte Unicode.</p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">poids</span>
+        <span class="field-type">integer</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">
+          Probabilité relative. <strong>Valeur minimale : 1.</strong>
+          Exemple : trois lignes avec les poids 10, 10, 5 donnent respectivement
+          40 %, 40 % et 20 % de chances d'être tirées.
+          Le poids peut être transmis comme chaîne (<code>"10"</code>) — Gentab le convertit automatiquement.
+        </p>
+      </div>
+    </div>
+
+    <h3>Exemple de table</h3>
+<pre><span class="punc">{</span>
+  <span class="key">"id"</span><span class="punc">:</span> <span class="str">"objets"</span><span class="punc">,</span>
+  <span class="key">"nom"</span><span class="punc">:</span> <span class="str">"Type d'objet"</span><span class="punc">,</span>
+  <span class="key">"lignes"</span><span class="punc">: [</span>
+    <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Épée"</span><span class="punc">,</span>            <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span> <span class="punc">},</span>
+    <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Bouclier"</span><span class="punc">,</span>         <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span> <span class="punc">},</span>
+    <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Arc"</span><span class="punc">,</span>             <span class="key">"poids"</span><span class="punc">:</span> <span class="num">8</span>  <span class="punc">},</span>
+    <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Potion de soin"</span><span class="punc">,</span>   <span class="key">"poids"</span><span class="punc">:</span> <span class="num">4</span>  <span class="punc">},</span>
+    <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Artefact ancien"</span><span class="punc">,</span>  <span class="key">"poids"</span><span class="punc">:</span> <span class="num">1</span>  <span class="punc">}</span>
+  <span class="punc">]</span>
+<span class="punc">}</span></pre>
+
+    <div class="callout info">
+      <span class="callout-icon">📊</span>
+      <strong>Calcul des probabilités :</strong> somme des poids = 33.
+      Épée et Bouclier : 10/33 ≈ 30 % chacun. Arc : 24 %. Potion : 12 %. Artefact : 3 %.
+    </div>
+  </section>
+
+  <!-- ── SEQUENCES ── -->
+  <section class="section" id="sequences">
+    <h2>Séquences</h2>
+    <p>
+      Une <strong>Séquence</strong> orchestre un ou plusieurs tirages dans des tables (ou d'autres
+      séquences). C'est l'unité sélectionnable dans l'onglet Tirer. Chaque séquence produit
+      une ligne de résultat avec plusieurs colonnes.
+    </p>
+
+    <div class="field-list">
+      <div class="field-card">
+        <span class="field-name">id</span>
+        <span class="field-type">string</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">Identifiant unique de la séquence. Utilisé dans les références <code>seq:</code>.</p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">nom</span>
+        <span class="field-type">string</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">Nom affiché dans la liste déroulante de l'onglet Tirer.</p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">description</span>
+        <span class="field-type">string</span>
+        <span class="field-optional">optionnel</span>
+        <p class="field-desc">Description affichée sous le sélecteur de séquence lors du tirage.</p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">items</span>
+        <span class="field-type">array</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">
+          Tableau d'Items. Chaque item produit une ou plusieurs colonnes dans le résultat.
+          Doit contenir au moins un item.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ITEMS & REFS ── -->
+  <section class="section" id="items">
+    <h2>Items &amp; Références</h2>
+    <p>
+      Un <strong>Item</strong> est une colonne de résultat. Il contient un tableau de
+      <strong>Références</strong> qui pointent vers des tables ou d'autres séquences.
+      Si un item a plusieurs références, l'une d'elles est sélectionnée aléatoirement
+      (tirage pondéré sur les poids des références) avant d'effectuer le tirage dans la cible.
+    </p>
+
+    <h4>Champs d'un item</h4>
+    <div class="field-list">
+      <div class="field-card">
+        <span class="field-name">titre</span>
+        <span class="field-type">string</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">
+          En-tête de la colonne dans le tableau de résultats.<br>
+          <em>Ignoré si l'item référence une séquence</em> — les titres des items de la
+          sous-séquence sont utilisés à la place.
+        </p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">references</span>
+        <span class="field-type">array</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">Tableau de Référence. Doit contenir au moins une référence.</p>
+      </div>
+    </div>
+
+    <h4>Champs d'une référence</h4>
+    <div class="field-list">
+      <div class="field-card">
+        <span class="field-name">ID</span>
+        <span class="field-type">string</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">
+          Identifiant de la cible, <strong>préfixé</strong> par <code>tbl:</code> ou <code>seq:</code>.
+          Voir la section <a href="#prefixes">Préfixes</a>.
+        </p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">poids</span>
+        <span class="field-type">integer</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">
+          Poids de sélection de cette référence parmi les autres références du même item.
+          Pertinent uniquement si l'item a plusieurs références.
+        </p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">min</span>
+        <span class="field-type">integer</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">
+          Nombre minimum de valeurs générées par ce tirage.
+          Pour une table : nombre minimum de lignes tirées.<br>
+          Pour une séquence : nombre minimum de fois que la sous-séquence est résolue.
+        </p>
+      </div>
+      <div class="field-card">
+        <span class="field-name">max</span>
+        <span class="field-type">integer</span>
+        <span class="field-required">requis</span>
+        <p class="field-desc">
+          Nombre maximum de valeurs générées. Doit être ≥ min.
+          Si min = max, le nombre est fixe. Sinon, un entier aléatoire entre min et max est choisi.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠</span>
+      <strong>Plusieurs valeurs dans une cellule :</strong> si min ou max est supérieur à 1,
+      plusieurs valeurs peuvent être générées pour un même item. Elles sont affichées
+      chacune sur sa propre ligne dans le tableau de résultats.
+    </div>
+
+    <h3>Format simplifié (item.id) <span class="badge v2">v2</span></h3>
+    <p>
+      Pour les items avec une seule référence à une table (min=1, max=1, poids=10),
+      un format raccourci est accepté en lecture :
+    </p>
+<pre><span class="cmt">// Format complet</span>
+<span class="punc">{</span>
+  <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Objet"</span><span class="punc">,</span>
+  <span class="key">"references"</span><span class="punc">: [{</span>
+    <span class="key">"ID"</span><span class="punc">:</span> <span class="str">"tbl:objets"</span><span class="punc">,</span> <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span><span class="punc">,</span> <span class="key">"min"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span> <span class="key">"max"</span><span class="punc">:</span> <span class="num">1</span>
+  <span class="punc">}]</span>
+<span class="punc">}</span>
+
+<span class="cmt">// Format simplifié équivalent (lecture seule)</span>
+<span class="punc">{</span> <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Objet"</span><span class="punc">,</span> <span class="key">"id"</span><span class="punc">:</span> <span class="str">"objets"</span> <span class="punc">}</span></pre>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ</span>
+      L'éditeur produit toujours le format complet lors de la sauvegarde.
+      Le format simplifié est uniquement reconnu en lecture.
+    </div>
+  </section>
+
+  <!-- ── PREFIXES ── -->
+  <section class="section" id="prefixes">
+    <h2>Préfixes tbl: et seq:</h2>
+    <p>
+      Le champ <code>ID</code> d'une référence utilise un préfixe pour distinguer le type de cible.
+      Ce préfixe n'apparaît <strong>que dans les références</strong> — les champs <code>id</code>
+      des objets Table et Séquence eux-mêmes sont des identifiants bruts, sans préfixe.
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Préfixe</th><th>Type</th><th>Exemple</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>tbl:</code></td>
+          <td>Table</td>
+          <td><code>tbl:objets</code></td>
+          <td>Référence une table par son <code>id</code></td>
+        </tr>
+        <tr>
+          <td><code>seq:</code></td>
+          <td>Séquence</td>
+          <td><code>seq:butin-mineral</code></td>
+          <td>Référence une séquence par son <code>id</code> <span class="badge new">v2</span></td>
+        </tr>
+        <tr>
+          <td><em>(sans préfixe)</em></td>
+          <td>Table</td>
+          <td><code>04b997b1-…</code></td>
+          <td>Rétrocompatibilité v1 uniquement. Traité comme <code>tbl:</code></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ── TIRAGE ── -->
+  <section class="section" id="tirage">
+    <h2>Algorithme de tirage</h2>
+
+    <h3>Tirage pondéré cumulatif</h3>
+    <p>
+      La sélection d'une ligne dans une table utilise un algorithme de tirage pondéré cumulatif :
+    </p>
+    <ol>
+      <li>Calculer la somme <em>S</em> de tous les poids de la table.</li>
+      <li>Tirer un réel aléatoire <em>R</em> dans [0, S[.</li>
+      <li>Parcourir les lignes en ordre, en soustrayant chaque poids de <em>R</em>.</li>
+      <li>Retourner la ligne courante dès que <em>R</em> &lt; 0.</li>
+    </ol>
+    <p>
+      Ce mécanisme garantit que chaque ligne est sélectionnée avec une probabilité
+      proportionnelle à son poids, quelle que soit la taille de la table.
+    </p>
+
+    <h3>Déduplication</h3>
+    <p>
+      Lors d'un tirage de <em>n</em> résultats, Gentab garantit que les
+      <strong>combinaisons complètes sont uniques</strong> :
+      une même combinaison (toutes les colonnes identiques) ne peut pas apparaître deux fois
+      dans le même tirage.
+    </p>
+    <p>
+      En revanche, une même valeur isolée <em>peut</em> apparaître plusieurs fois
+      (ex. plusieurs lignes avec « Épée » dans la colonne Type, tant qu'elles diffèrent
+      sur d'autres colonnes).
+    </p>
+
+    <div class="callout warn">
+      <span class="callout-icon">⚠</span>
+      Si l'espace des combinaisons uniques possibles est inférieur au nombre de tirages demandé,
+      Gentab retourne le maximum disponible et affiche un avertissement.
+    </div>
+  </section>
+
+  <!-- ── IMBRICATION ── -->
+  <section class="section" id="imbrication">
+    <h2>Séquences imbriquées <span class="badge new">v2</span></h2>
+    <p>
+      Une référence peut pointer vers une <strong>séquence</strong> (préfixe <code>seq:</code>)
+      au lieu d'une table. Dans ce cas, la sous-séquence est résolue entièrement et ses colonnes
+      sont <em>injectées</em> à la position de l'item parent dans le tableau de résultats.
+    </p>
+    <p>
+      Cela permet de composer des séquences complexes en réutilisant des séquences existantes.
+      Les champs <code>min</code> et <code>max</code> contrôlent combien de fois la
+      sous-séquence est résolue.
+    </p>
+
+    <h3>Exemple</h3>
+    <p>
+      Une séquence « Butin » avec un item « Objet » pouvant référencer soit
+      « Objet Minéral » soit « Objet Manufacturé » :
+    </p>
+<pre><span class="punc">{</span>
+  <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Objet"</span><span class="punc">,</span>
+  <span class="key">"references"</span><span class="punc">: [</span>
+    <span class="punc">{</span>
+      <span class="key">"ID"</span><span class="punc">:</span>    <span class="str">"seq:objet-mineral"</span><span class="punc">,</span>
+      <span class="key">"poids"</span><span class="punc">:</span> <span class="num">5</span><span class="punc">,</span>
+      <span class="key">"min"</span><span class="punc">:</span>   <span class="num">1</span><span class="punc">,</span>
+      <span class="key">"max"</span><span class="punc">:</span>   <span class="num">1</span>
+    <span class="punc">},</span>
+    <span class="punc">{</span>
+      <span class="key">"ID"</span><span class="punc">:</span>    <span class="str">"seq:objet-manufacture"</span><span class="punc">,</span>
+      <span class="key">"poids"</span><span class="punc">:</span> <span class="num">5</span><span class="punc">,</span>
+      <span class="key">"min"</span><span class="punc">:</span>   <span class="num">1</span><span class="punc">,</span>
+      <span class="key">"max"</span><span class="punc">:</span>   <span class="num">1</span>
+    <span class="punc">}</span>
+  <span class="punc">]</span>
+<span class="punc">}</span></pre>
+
+    <p>
+      Si « Objet Minéral » contient les items <em>Matière</em> et <em>Qualité</em>,
+      et « Objet Manufacturé » les items <em>Type</em> et <em>Matériau</em>,
+      le tableau de résultats affichera 2 colonnes dynamiques selon la sous-séquence sélectionnée.
+    </p>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ</span>
+      Les colonnes des sous-séquences sont affichées en <em style="color:var(--purple)">violet italique</em>
+      dans le tableau de résultats pour les distinguer des colonnes directes.
+    </div>
+  </section>
+
+  <!-- ── BOUCLES ── -->
+  <section class="section" id="boucles">
+    <h2>Boucles circulaires</h2>
+    <p>
+      Une boucle circulaire survient quand la séquence A référence la séquence B
+      qui référence (directement ou indirectement) la séquence A.
+    </p>
+    <p>Gentab détecte et gère les boucles à deux niveaux :</p>
+    <ul>
+      <li>
+        <strong>À l'ouverture du fichier :</strong> une analyse DFS (parcours en profondeur)
+        identifie toutes les séquences impliquées. Elles sont signalées par ⚠ dans la liste
+        et le tirage est bloqué pour ces séquences.
+      </li>
+      <li>
+        <strong>Durant le tirage :</strong> une pile d'appel maintient les IDs de séquences
+        en cours de résolution. Si une séquence cible est déjà dans la pile, la résolution
+        s'arrête et la cellule affiche <code>[boucle]</code>.
+      </li>
+      <li>
+        <strong>Garde de profondeur :</strong> même sans cycle, la résolution est limitée
+        à 50 niveaux d'imbrication pour prévenir tout débordement de pile.
+      </li>
+    </ul>
+
+    <div class="callout tip">
+      <span class="callout-icon">✓</span>
+      Les séquences <em>valides</em> d'un fichier contenant des boucles circulaires
+      restent utilisables normalement. Seules les séquences directement impliquées
+      dans le cycle sont bloquées.
+    </div>
+  </section>
+
+  <!-- ── EXEMPLE SIMPLE ── -->
+  <section class="section" id="exemple-simple">
+    <h2>Exemple : fichier simple</h2>
+    <p>
+      Un générateur de rencontres avec un personnage et un lieu.
+      La séquence tire une fois dans chaque table.
+    </p>
+
+<pre><span class="punc">{</span>
+  <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Générateur de rencontres"</span><span class="punc">,</span>
+  <span class="key">"tables"</span><span class="punc">: [</span>
+    <span class="punc">{</span>
+      <span class="key">"id"</span><span class="punc">:</span> <span class="str">"personnages"</span><span class="punc">,</span>
+      <span class="key">"nom"</span><span class="punc">:</span> <span class="str">"Personnage"</span><span class="punc">,</span>
+      <span class="key">"lignes"</span><span class="punc">: [</span>
+        <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Guerrier"</span><span class="punc">,</span>     <span class="key">"poids"</span><span class="punc">:</span> <span class="num">8</span> <span class="punc">},</span>
+        <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Mage"</span><span class="punc">,</span>         <span class="key">"poids"</span><span class="punc">:</span> <span class="num">6</span> <span class="punc">},</span>
+        <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Nécromancien"</span><span class="punc">,</span> <span class="key">"poids"</span><span class="punc">:</span> <span class="num">2</span> <span class="punc">}</span>
+      <span class="punc">]</span>
+    <span class="punc">},</span>
+    <span class="punc">{</span>
+      <span class="key">"id"</span><span class="punc">:</span> <span class="str">"lieux"</span><span class="punc">,</span>
+      <span class="key">"nom"</span><span class="punc">:</span> <span class="str">"Lieu"</span><span class="punc">,</span>
+      <span class="key">"lignes"</span><span class="punc">: [</span>
+        <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Donjon"</span><span class="punc">,</span>  <span class="key">"poids"</span><span class="punc">:</span> <span class="num">8</span> <span class="punc">},</span>
+        <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Forêt"</span><span class="punc">,</span>   <span class="key">"poids"</span><span class="punc">:</span> <span class="num">8</span> <span class="punc">},</span>
+        <span class="punc">{</span> <span class="key">"contenu"</span><span class="punc">:</span> <span class="str">"Taverne"</span><span class="punc">,</span> <span class="key">"poids"</span><span class="punc">:</span> <span class="num">4</span> <span class="punc">}</span>
+      <span class="punc">]</span>
+    <span class="punc">}</span>
+  <span class="punc">],</span>
+  <span class="key">"sequences"</span><span class="punc">: [</span>
+    <span class="punc">{</span>
+      <span class="key">"id"</span><span class="punc">:</span>          <span class="str">"rencontre"</span><span class="punc">,</span>
+      <span class="key">"nom"</span><span class="punc">:</span>         <span class="str">"Rencontre aléatoire"</span><span class="punc">,</span>
+      <span class="key">"description"</span><span class="punc">:</span> <span class="str">"Un personnage rencontré quelque part"</span><span class="punc">,</span>
+      <span class="key">"items"</span><span class="punc">: [</span>
+        <span class="punc">{</span>
+          <span class="key">"titre"</span><span class="punc">:</span>      <span class="str">"Qui ?"</span><span class="punc">,</span>
+          <span class="key">"references"</span><span class="punc">: [{</span>
+            <span class="key">"ID"</span><span class="punc">:</span> <span class="str">"tbl:personnages"</span><span class="punc">,</span> <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span><span class="punc">,</span> <span class="key">"min"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span> <span class="key">"max"</span><span class="punc">:</span> <span class="num">1</span>
+          <span class="punc">}]</span>
+        <span class="punc">},</span>
+        <span class="punc">{</span>
+          <span class="key">"titre"</span><span class="punc">:</span>      <span class="str">"Où ?"</span><span class="punc">,</span>
+          <span class="key">"references"</span><span class="punc">: [{</span>
+            <span class="key">"ID"</span><span class="punc">:</span> <span class="str">"tbl:lieux"</span><span class="punc">,</span> <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span><span class="punc">,</span> <span class="key">"min"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span> <span class="key">"max"</span><span class="punc">:</span> <span class="num">1</span>
+          <span class="punc">}]</span>
+        <span class="punc">}</span>
+      <span class="punc">]</span>
+    <span class="punc">}</span>
+  <span class="punc">]</span>
+<span class="punc">}</span></pre>
+
+    <p>Résultat d'un tirage de 3 :</p>
+    <div class="table-wrap">
+    <table class="result-table">
+      <thead><tr><th>#</th><th>Qui ?</th><th>Où ?</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Guerrier</td><td>Donjon</td></tr>
+        <tr><td>2</td><td>Mage</td><td>Forêt</td></tr>
+        <tr><td>3</td><td>Nécromancien</td><td>Taverne</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ── EXEMPLE AVANCÉ ── -->
+  <section class="section" id="exemple-avance">
+    <h2>Exemple : références multiples et min/max</h2>
+    <p>
+      Un item avec <strong>deux références</strong> (tirage pondéré sur la référence)
+      et un <strong>min/max</strong> pour tirer plusieurs valeurs.
+    </p>
+
+<pre><span class="punc">{</span>
+  <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Prénom"</span><span class="punc">,</span>
+  <span class="key">"references"</span><span class="punc">: [</span>
+    <span class="punc">{</span>
+      <span class="key">"ID"</span><span class="punc">:</span>    <span class="str">"tbl:prenoms-masculins"</span><span class="punc">,</span>
+      <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span><span class="punc">,</span>
+      <span class="key">"min"</span><span class="punc">:</span>   <span class="num">1</span><span class="punc">,</span>
+      <span class="key">"max"</span><span class="punc">:</span>   <span class="num">1</span>
+    <span class="punc">},</span>
+    <span class="punc">{</span>
+      <span class="key">"ID"</span><span class="punc">:</span>    <span class="str">"tbl:prenoms-feminins"</span><span class="punc">,</span>
+      <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span><span class="punc">,</span>  <span class="cmt">// 50/50 entre les deux tables</span>
+      <span class="key">"min"</span><span class="punc">:</span>   <span class="num">1</span><span class="punc">,</span>
+      <span class="key">"max"</span><span class="punc">:</span>   <span class="num">1</span>
+    <span class="punc">}</span>
+  <span class="punc">]</span>
+<span class="punc">}</span>
+
+<span class="cmt">// Avec min:1, max:3 — tire entre 1 et 3 valeurs de la table choisie</span>
+<span class="punc">{</span>
+  <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Butin"</span><span class="punc">,</span>
+  <span class="key">"references"</span><span class="punc">: [{</span>
+    <span class="key">"ID"</span><span class="punc">:</span> <span class="str">"tbl:objets"</span><span class="punc">,</span> <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span><span class="punc">,</span> <span class="key">"min"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span> <span class="key">"max"</span><span class="punc">:</span> <span class="num">3</span>
+  <span class="punc">}]</span>
+<span class="punc">}</span></pre>
+  </section>
+
+  <!-- ── EXEMPLE SEQ ── -->
+  <section class="section" id="exemple-seq">
+    <h2>Exemple : séquences imbriquées</h2>
+    <p>
+      Deux sous-séquences (« Objet Minéral », « Objet Manufacturé ») référencées depuis
+      une séquence parente (« Butin »).
+    </p>
+
+<pre><span class="punc">{</span>
+  <span class="key">"sequences"</span><span class="punc">: [</span>
+    <span class="punc">{</span>
+      <span class="key">"id"</span><span class="punc">:</span> <span class="str">"objet-mineral"</span><span class="punc">,</span>
+      <span class="key">"nom"</span><span class="punc">:</span> <span class="str">"Objet Minéral"</span><span class="punc">,</span>
+      <span class="key">"items"</span><span class="punc">: [</span>
+        <span class="punc">{</span> <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Matière"</span><span class="punc">,</span>  <span class="key">"references"</span><span class="punc">: [{</span> <span class="key">"ID"</span><span class="punc">:</span> <span class="str">"tbl:matieres"</span><span class="punc">,</span>  <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span><span class="punc">,</span> <span class="key">"min"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span> <span class="key">"max"</span><span class="punc">:</span> <span class="num">1</span> <span class="punc">}]</span> <span class="punc">},</span>
+        <span class="punc">{</span> <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Qualité"</span><span class="punc">,</span>   <span class="key">"references"</span><span class="punc">: [{</span> <span class="key">"ID"</span><span class="punc">:</span> <span class="str">"tbl:qualites"</span><span class="punc">,</span>  <span class="key">"poids"</span><span class="punc">:</span> <span class="num">10</span><span class="punc">,</span> <span class="key">"min"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span> <span class="key">"max"</span><span class="punc">:</span> <span class="num">1</span> <span class="punc">}]</span> <span class="punc">}</span>
+      <span class="punc">]</span>
+    <span class="punc">},</span>
+    <span class="punc">{</span>
+      <span class="key">"id"</span><span class="punc">:</span> <span class="str">"butin"</span><span class="punc">,</span>
+      <span class="key">"nom"</span><span class="punc">:</span> <span class="str">"Butin de rencontre"</span><span class="punc">,</span>
+      <span class="key">"items"</span><span class="punc">: [</span>
+        <span class="punc">{</span>
+          <span class="key">"titre"</span><span class="punc">:</span> <span class="str">"Objet"</span><span class="punc">,</span>
+          <span class="key">"references"</span><span class="punc">: [</span>
+            <span class="punc">{</span> <span class="key">"ID"</span><span class="punc">:</span> <span class="str">"seq:objet-mineral"</span><span class="punc">,</span>     <span class="key">"poids"</span><span class="punc">:</span> <span class="num">5</span><span class="punc">,</span> <span class="key">"min"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span> <span class="key">"max"</span><span class="punc">:</span> <span class="num">1</span> <span class="punc">},</span>
+            <span class="punc">{</span> <span class="key">"ID"</span><span class="punc">:</span> <span class="str">"seq:objet-manufacture"</span><span class="punc">,</span>  <span class="key">"poids"</span><span class="punc">:</span> <span class="num">5</span><span class="punc">,</span> <span class="key">"min"</span><span class="punc">:</span> <span class="num">1</span><span class="punc">,</span> <span class="key">"max"</span><span class="punc">:</span> <span class="num">1</span> <span class="punc">}</span>
+          <span class="punc">]</span>
+        <span class="punc">}</span>
+      <span class="punc">]</span>
+    <span class="punc">}</span>
+  <span class="punc">]</span>
+<span class="punc">}</span></pre>
+  </section>
+
+  <!-- ── SCHEMA ── -->
+  <section class="section" id="schema">
+    <h2>Schéma complet</h2>
+    <p>Résumé de tous les champs avec leur type et statut :</p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Chemin</th><th>Type</th><th>Statut</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>titre</code></td><td>string</td><td>optionnel</td><td>Titre de la collection</td></tr>
+        <tr><td><code>description</code></td><td>string</td><td>optionnel</td><td>Description de la collection</td></tr>
+        <tr><td><code>tables</code></td><td>array</td><td>requis</td><td>Liste des tables</td></tr>
+        <tr><td><code>tables[].id</code></td><td>string</td><td>requis</td><td>Identifiant unique (sans préfixe)</td></tr>
+        <tr><td><code>tables[].nom</code></td><td>string</td><td>requis</td><td>Nom affiché en en-tête de colonne</td></tr>
+        <tr><td><code>tables[].lignes</code></td><td>array</td><td>requis</td><td>Tableau de lignes</td></tr>
+        <tr><td><code>tables[].lignes[].contenu</code></td><td>string</td><td>requis</td><td>Valeur tirée</td></tr>
+        <tr><td><code>tables[].lignes[].poids</code></td><td>integer</td><td>requis</td><td>Poids (≥ 1)</td></tr>
+        <tr><td><code>sequences</code></td><td>array</td><td>requis</td><td>Liste des séquences</td></tr>
+        <tr><td><code>sequences[].id</code></td><td>string</td><td>requis</td><td>Identifiant unique (sans préfixe)</td></tr>
+        <tr><td><code>sequences[].nom</code></td><td>string</td><td>requis</td><td>Nom dans la liste déroulante</td></tr>
+        <tr><td><code>sequences[].description</code></td><td>string</td><td>optionnel</td><td>Description affichée sous le sélecteur</td></tr>
+        <tr><td><code>sequences[].items</code></td><td>array</td><td>requis</td><td>Liste des items (colonnes)</td></tr>
+        <tr><td><code>sequences[].items[].titre</code></td><td>string</td><td>requis</td><td>En-tête de colonne</td></tr>
+        <tr><td><code>sequences[].items[].references</code></td><td>array</td><td>requis</td><td>Références (au moins une)</td></tr>
+        <tr><td><code>…references[].ID</code></td><td>string</td><td>requis</td><td><code>tbl:id</code> ou <code>seq:id</code></td></tr>
+        <tr><td><code>…references[].poids</code></td><td>integer</td><td>requis</td><td>Poids de sélection de cette référence</td></tr>
+        <tr><td><code>…references[].min</code></td><td>integer</td><td>requis</td><td>Nombre minimum de valeurs (≥ 1)</td></tr>
+        <tr><td><code>…references[].max</code></td><td>integer</td><td>requis</td><td>Nombre maximum de valeurs (≥ min)</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ── RETROCOMPAT ── -->
+  <section class="section" id="retrocompat">
+    <h2>Rétrocompatibilité v1</h2>
+    <p>Les fichiers v1 utilisent des conventions différentes, toutes gérées automatiquement :</p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Élément</th><th>v1</th><th>v2</th></tr></thead>
+      <tbody>
+        <tr><td>Enveloppe racine</td><td><code>"Collection": { ... }</code></td><td>Racine nue</td></tr>
+        <tr><td>Champ ID de table</td><td><code>"ID"</code> (majuscule)</td><td><code>"id"</code> (minuscule)</td></tr>
+        <tr><td>Champ nom de table</td><td><code>"nom"</code> ou <code>"name"</code></td><td><code>"nom"</code></td></tr>
+        <tr><td>ID de séquence</td><td>Absent (index utilisé)</td><td><code>"id"</code></td></tr>
+        <tr><td>Préfixe référence</td><td>Absent (UUID brut)</td><td><code>tbl:</code> ou <code>seq:</code></td></tr>
+        <tr><td>Poids de ligne</td><td>Chaîne <code>"10"</code></td><td>Entier <code>10</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">✓</span>
+      Aucune modification n'est nécessaire sur vos fichiers v1. Chargez-les directement.
+    </div>
+  </section>
+
+  <!-- ── VALIDATION ── -->
+  <section class="section" id="validation">
+    <h2>Règles de validation</h2>
+    <p>
+      L'éditeur vérifie ces règles en temps réel et bloque la sauvegarde
+      si l'une d'elles est violée :
+    </p>
+    <ul>
+      <li>Le <strong>titre</strong> de la collection ne peut pas être vide.</li>
+      <li>Chaque <strong>table</strong> doit avoir un nom non vide et au moins une ligne.</li>
+      <li>Chaque <strong>ligne</strong> doit avoir un contenu non vide et un poids ≥ 1.</li>
+      <li>Chaque <strong>séquence</strong> doit avoir un nom non vide et au moins un item.</li>
+      <li>Chaque <strong>item</strong> doit avoir un titre non vide et au moins une référence.</li>
+      <li>Chaque <strong>référence</strong> doit pointer vers une cible existante.</li>
+      <li>Dans une référence, <strong>max doit être ≥ min</strong>.</li>
+      <li>Les <strong>boucles circulaires</strong> entre séquences sont détectées et signalées.</li>
+    </ul>
+  </section>
+
+  <!-- ── LICENCE ── -->
+  <section class="section" id="licence">
+    <h2>Licence</h2>
+    <div class="callout purple">
+      <strong>THE BEER-WARE LICENSE</strong><br><br>
+      As long as you retain this notice you can do whatever you want with this software.
+      If we meet some day, and you think this is worth it, you can buy me a beer in return.
+    </div>
+  </section>
+
+  <footer>
+    Gentab v3 &nbsp;·&nbsp; Documentation &nbsp;·&nbsp; Mars 2026
+  </footer>
+
+</main>
+</div>
+
+<script>
+// ── Navigation active link ──
+const sections = document.querySelectorAll('section.section');
+const navLinks = document.querySelectorAll('nav.sidebar a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      navLinks.forEach(a => a.classList.remove('active'));
+      const active = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,3915 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gentab v3</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap");
+
+      :root {
+        --blue-dark: #1e3a5f;
+        --blue-mid: #2e6da4;
+        --blue-light: #d6e4f0;
+        --blue-pale: #ebf4fb;
+        --white: #ffffff;
+        --grey-border: #cccccc;
+        --grey-text: #666666;
+        --grey-bg: #f4f7fa;
+        --red: #c00000;
+        --amber: #e07b00;
+        --green: #1a6b2a;
+        --purple: #5b2d8e;
+        --purple-pale: #f0eaf8;
+        --purple-mid: #8b5ec0;
+        --radius: 6px;
+        --shadow: 0 2px 8px rgba(30, 58, 95, 0.1);
+        --shadow-md: 0 4px 20px rgba(30, 58, 95, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Accessibilité — anneau de focus visible pour la navigation clavier.
+     On supprime l'outline par défaut (géré élément par élément ci-dessous)
+     mais on le rétablit avec :focus-visible pour les utilisateurs clavier. */
+      :focus {
+        outline: none;
+      }
+      :focus-visible {
+        outline: 2px solid var(--blue-mid);
+        outline-offset: 2px;
+        border-radius: var(--radius);
+      }
+
+      body {
+        font-family: "Outfit", system-ui, sans-serif;
+        background: var(--grey-bg);
+        color: var(--blue-dark);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 260px;
+        background: linear-gradient(
+          160deg,
+          var(--blue-dark) 0%,
+          var(--blue-mid) 100%
+        );
+        z-index: -1;
+      }
+
+      .app {
+        width: 100%;
+        max-width: 1100px;
+        padding: 0 20px 60px;
+      }
+
+      /* ── HEADER ── */
+      header {
+        text-align: center;
+        padding: 36px 0 0;
+        position: relative;
+      }
+
+      .header-ornament {
+        color: rgba(214, 228, 240, 0.5);
+        font-size: 0.7rem;
+        letter-spacing: 0.6em;
+        margin-bottom: 8px;
+        display: block;
+        text-transform: uppercase;
+        font-weight: 300;
+      }
+
+      h1.app-title {
+        font-family: "Outfit", sans-serif;
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: #fff;
+        text-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+        line-height: 1;
+      }
+      h1.app-title span.v {
+        font-size: 0.45em;
+        font-weight: 300;
+        color: var(--blue-light);
+        vertical-align: super;
+        letter-spacing: 0.1em;
+        margin-left: 4px;
+      }
+      h1.app-title::after {
+        content: "";
+        display: block;
+        width: 48px;
+        height: 3px;
+        background: var(--blue-light);
+        margin: 12px auto 0;
+        border-radius: 2px;
+        opacity: 0.7;
+      }
+
+      .app-subtitle {
+        font-family: "Lora", Georgia, serif;
+        font-style: italic;
+        color: rgba(214, 228, 240, 0.8);
+        font-size: 0.92rem;
+        margin-top: 10px;
+      }
+
+      .lang-btn {
+        position: absolute;
+        top: 36px;
+        right: 0;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #fff;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        padding: 6px 14px;
+        cursor: pointer;
+        border-radius: 20px;
+        transition: all 0.2s;
+      }
+      .lang-btn:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+
+      /* File load button in header (on dark bg) */
+      header .btn-load {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.45);
+        color: #ffffff;
+      }
+      header .btn-load:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.7);
+        color: #ffffff;
+      }
+
+      .file-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.76rem;
+        font-weight: 500;
+        padding: 4px 14px;
+        border-radius: 20px;
+        margin-top: 12px;
+        border: 1px solid transparent;
+        transition: all 0.3s;
+      }
+      .file-status.none {
+        color: rgba(214, 228, 240, 0.6);
+        border-color: rgba(214, 228, 240, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .file-status.ok {
+        color: #6fda8a;
+        border-color: rgba(111, 218, 138, 0.35);
+        background: rgba(26, 107, 42, 0.2);
+      }
+      .file-status.warn {
+        color: #f5b84a;
+        border-color: rgba(224, 123, 0, 0.4);
+        background: rgba(224, 123, 0, 0.15);
+      }
+      .file-status.error {
+        color: #f07070;
+        border-color: rgba(192, 0, 0, 0.4);
+        background: rgba(192, 0, 0, 0.15);
+      }
+
+      /* ── TABS ── */
+      .tab-bar {
+        display: flex;
+        gap: 0;
+        margin-top: 20px;
+        background: var(--white);
+        border-radius: var(--radius) var(--radius) 0 0;
+        border: 1px solid var(--grey-border);
+        border-bottom: none;
+        overflow: hidden;
+      }
+      .tab-btn {
+        background: transparent;
+        border: none;
+        color: var(--grey-text);
+        cursor: pointer;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        padding: 13px 30px;
+        border-bottom: 3px solid transparent;
+        transition: all 0.18s;
+      }
+      .tab-btn:hover {
+        color: var(--blue-mid);
+        background: var(--blue-pale);
+      }
+      .tab-btn.active {
+        color: var(--blue-dark);
+        border-bottom-color: var(--blue-mid);
+        background: var(--white);
+      }
+      .tab-btn .dirty {
+        color: var(--amber);
+        margin-left: 3px;
+      }
+
+      .tab-content {
+        display: none;
+        padding-top: 20px;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      /* ── CARDS ── */
+      .card {
+        background: var(--white);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--grey-border);
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--blue-mid), var(--blue-dark));
+      }
+
+      .panel-title {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        color: var(--blue-mid);
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .panel-title::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--blue-light);
+      }
+
+      /* ── DRAW TAB ── */
+      .control-panel {
+        padding: 26px 30px;
+        margin-bottom: 16px;
+      }
+      .controls-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        align-items: flex-end;
+      }
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+        min-width: 160px;
+      }
+      .control-group.narrow {
+        flex: 0 0 auto;
+        min-width: 100px;
+      }
+      .control-group.wide {
+        flex: 2;
+      }
+      label.ctrl-label {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--blue-mid);
+        text-transform: uppercase;
+      }
+      input[type="file"] {
+        display: none;
+      }
+
+      .btn-load {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--white);
+        border: 1.5px solid var(--blue-mid);
+        color: var(--blue-mid);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 9px 16px;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: all 0.18s;
+        white-space: nowrap;
+      }
+      .btn-load:hover {
+        background: var(--blue-pale);
+        border-color: var(--blue-dark);
+        color: var(--blue-dark);
+      }
+
+      select.ctrl-select,
+      input.ctrl-input {
+        background: var(--white);
+        border: 1.5px solid var(--grey-border);
+        color: var(--blue-dark);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.93rem;
+        padding: 8px 12px;
+        border-radius: var(--radius);
+        appearance: none;
+        outline: none;
+        width: 100%;
+        transition:
+          border-color 0.18s,
+          box-shadow 0.18s;
+      }
+      select.ctrl-select:focus,
+      input.ctrl-input:focus {
+        border-color: var(--blue-mid);
+        box-shadow: 0 0 0 3px rgba(46, 109, 164, 0.12);
+      }
+      select.ctrl-select:focus-visible,
+      input.ctrl-input:focus-visible {
+        outline: 2px solid var(--blue-mid);
+        outline-offset: 2px;
+      }
+      select.ctrl-select:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        background: var(--grey-bg);
+      }
+      .select-wrapper {
+        position: relative;
+      }
+      .select-wrapper::after {
+        content: "▾";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--blue-mid);
+        pointer-events: none;
+        font-size: 0.75rem;
+      }
+      input.ctrl-input {
+        text-align: center;
+        font-size: 1.05rem;
+        font-weight: 600;
+      }
+      input.ctrl-input::-webkit-inner-spin-button {
+        opacity: 0;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--blue-dark) 0%,
+          var(--blue-mid) 100%
+        );
+        border: none;
+        color: #fff;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.84rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        padding: 10px 24px;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: all 0.18s;
+        white-space: nowrap;
+        box-shadow: 0 2px 10px rgba(30, 58, 95, 0.3);
+      }
+      .btn-primary:hover:not(:disabled) {
+        background: linear-gradient(135deg, #152c4a, #235a8a);
+        box-shadow: 0 4px 18px rgba(30, 58, 95, 0.4);
+        transform: translateY(-1px);
+      }
+      .btn-primary:disabled {
+        opacity: 0.38;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .seq-desc {
+        margin-top: 8px;
+        font-family: "Lora", Georgia, serif;
+        font-style: italic;
+        font-size: 0.86rem;
+        color: var(--grey-text);
+        padding: 7px 12px;
+        border-left: 3px solid var(--blue-light);
+        background: var(--blue-pale);
+        border-radius: 0 var(--radius) var(--radius) 0;
+        display: none;
+      }
+      .seq-desc.visible {
+        display: block;
+      }
+
+      .message-bar {
+        padding: 9px 16px;
+        border-radius: var(--radius);
+        font-size: 0.86rem;
+        margin-bottom: 12px;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+      }
+      .message-bar.show {
+        display: flex;
+      }
+      .message-bar.error {
+        background: rgba(192, 0, 0, 0.07);
+        border: 1px solid rgba(192, 0, 0, 0.25);
+        color: var(--red);
+      }
+      .message-bar.warn {
+        background: rgba(224, 123, 0, 0.07);
+        border: 1px solid rgba(224, 123, 0, 0.25);
+        color: var(--amber);
+      }
+      .message-bar.info {
+        background: rgba(26, 107, 42, 0.07);
+        border: 1px solid rgba(26, 107, 42, 0.25);
+        color: var(--green);
+      }
+
+      .results-panel {
+        padding: 26px 30px;
+      }
+      .results-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .badge-count {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        padding: 4px 14px;
+        border-radius: 20px;
+        border: 1px solid;
+        transition: all 0.3s;
+      }
+      .badge-count.full {
+        color: var(--green);
+        border-color: rgba(26, 107, 42, 0.35);
+        background: rgba(26, 107, 42, 0.07);
+      }
+      .badge-count.partial {
+        color: var(--amber);
+        border-color: rgba(224, 123, 0, 0.35);
+        background: rgba(224, 123, 0, 0.07);
+      }
+      .badge-count.empty {
+        color: var(--grey-text);
+        border-color: var(--grey-border);
+        background: var(--grey-bg);
+      }
+      .results-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .btn-action {
+        background: var(--white);
+        border: 1.5px solid var(--grey-border);
+        color: var(--blue-mid);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 6px 16px;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: all 0.18s;
+      }
+      .btn-action:hover {
+        border-color: var(--blue-mid);
+        background: var(--blue-pale);
+      }
+      .btn-action:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .table-scroll {
+        overflow-x: auto;
+        border-radius: var(--radius);
+        border: 1px solid var(--grey-border);
+      }
+      .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+      }
+      .results-table thead th {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #fff;
+        background: var(--blue-dark);
+        padding: 10px 16px;
+        text-align: left;
+        border-bottom: 2px solid var(--blue-mid);
+        white-space: nowrap;
+      }
+      .results-table thead th.seq-col {
+        background: var(--purple);
+        border-bottom-color: var(--purple-mid);
+      }
+      .results-table tbody tr {
+        transition: background 0.12s;
+        animation: rowIn 0.22s ease both;
+      }
+      @keyframes rowIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .results-table tbody tr:nth-child(even) td {
+        background: var(--blue-pale);
+      }
+      .results-table tbody tr:hover td {
+        background: var(--blue-light) !important;
+      }
+      .results-table td {
+        padding: 8px 16px;
+        border-bottom: 1px solid var(--blue-light);
+        color: var(--blue-dark);
+        vertical-align: top;
+        line-height: 1.5;
+      }
+      .results-table td.seq-col {
+        color: var(--purple);
+        font-style: italic;
+      }
+      .results-table td.error-cell {
+        color: var(--red);
+        font-style: italic;
+        opacity: 0.7;
+      }
+      .row-num {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--grey-text);
+        white-space: nowrap;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 52px 20px;
+        color: var(--grey-text);
+        font-family: "Lora", Georgia, serif;
+        font-style: italic;
+        font-size: 1rem;
+      }
+      .empty-state .rune {
+        font-size: 2rem;
+        color: var(--blue-light);
+        display: block;
+        margin-bottom: 12px;
+        letter-spacing: 0.4em;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg) scale(1.05);
+        }
+        to {
+          transform: rotate(360deg) scale(1.05);
+        }
+      }
+      .spinning {
+        animation: spin 0.35s linear;
+      }
+
+      /* ── EDITOR TAB ── */
+      .editor-layout {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      }
+
+      /* Left panel */
+      .ed-sidebar {
+        width: 260px;
+        flex-shrink: 0;
+      }
+      .ed-sidebar .card {
+        margin-bottom: 12px;
+        overflow: visible;
+      }
+
+      .ed-toolbar {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+      }
+      .btn-tool {
+        background: var(--white);
+        border: 1.5px solid var(--grey-border);
+        color: var(--blue-dark);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.72rem;
+        font-weight: 600;
+        padding: 6px 12px;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: all 0.18s;
+        white-space: nowrap;
+      }
+      .btn-tool:hover {
+        border-color: var(--blue-mid);
+        color: var(--blue-mid);
+        background: var(--blue-pale);
+      }
+      .btn-tool.danger:hover {
+        border-color: var(--red);
+        color: var(--red);
+        background: rgba(192, 0, 0, 0.05);
+      }
+      .btn-tool:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      .ed-meta {
+        padding: 14px 16px;
+      }
+      .ed-meta input,
+      .ed-meta textarea {
+        width: 100%;
+        border: 1.5px solid var(--grey-border);
+        border-radius: var(--radius);
+        padding: 6px 10px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.85rem;
+        color: var(--blue-dark);
+        outline: none;
+        resize: vertical;
+        transition: border-color 0.18s;
+        background: var(--white);
+      }
+      .ed-meta input:focus,
+      .ed-meta textarea:focus {
+        border-color: var(--blue-mid);
+        box-shadow: 0 0 0 3px rgba(46, 109, 164, 0.1);
+      }
+      .ed-meta label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--blue-mid);
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 4px;
+        margin-top: 10px;
+      }
+      .ed-meta label:first-child {
+        margin-top: 0;
+      }
+
+      .tree-section {
+        padding: 10px 14px 14px;
+      }
+      .tree-section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .tree-section-title {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        color: var(--blue-mid);
+        text-transform: uppercase;
+      }
+      .btn-tree-add {
+        background: transparent;
+        border: none;
+        color: var(--blue-mid);
+        cursor: pointer;
+        font-size: 1rem;
+        line-height: 1;
+        padding: 2px 6px;
+        border-radius: 4px;
+        transition: all 0.15s;
+      }
+      .btn-tree-add:hover {
+        background: var(--blue-pale);
+      }
+
+      .tree-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .tree-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.15s;
+        font-size: 0.86rem;
+        user-select: none;
+      }
+      .tree-item:hover {
+        background: var(--blue-pale);
+      }
+      .tree-item.selected {
+        background: var(--blue-pale);
+        border-color: var(--blue-light);
+        border-left: 3px solid var(--blue-mid);
+        padding-left: 8px;
+      }
+      .tree-item.circular {
+        color: var(--amber);
+      }
+      .tree-item .item-name {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .tree-item .item-count {
+        font-size: 0.7rem;
+        color: var(--grey-text);
+        white-space: nowrap;
+      }
+      .tree-item .item-menu {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--grey-text);
+        padding: 1px 4px;
+        border-radius: 3px;
+        font-size: 0.9rem;
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+      .tree-item:hover .item-menu {
+        opacity: 1;
+      }
+      .tree-item.dragging {
+        opacity: 0.4;
+      }
+      .tree-item.drag-over {
+        border-top: 2px solid var(--blue-mid);
+      }
+
+      /* Right panel - editor form */
+      .ed-main {
+        flex: 1;
+        min-width: 0;
+      }
+      .ed-form {
+        padding: 24px 28px;
+      }
+      .ed-form-empty {
+        padding: 52px 28px;
+        text-align: center;
+        color: var(--grey-text);
+        font-family: "Lora", Georgia, serif;
+        font-style: italic;
+        font-size: 0.95rem;
+      }
+      .ed-form-empty .icon {
+        font-size: 2.5rem;
+        display: block;
+        margin-bottom: 12px;
+        color: var(--blue-light);
+      }
+
+      .field-group {
+        margin-bottom: 16px;
+      }
+      .field-group label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--blue-mid);
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .field-group input,
+      .field-group textarea {
+        width: 100%;
+        border: 1.5px solid var(--grey-border);
+        border-radius: var(--radius);
+        padding: 8px 12px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.93rem;
+        color: var(--blue-dark);
+        outline: none;
+        resize: vertical;
+        transition: border-color 0.18s;
+      }
+      .field-group input:focus,
+      .field-group textarea:focus {
+        border-color: var(--blue-mid);
+        box-shadow: 0 0 0 3px rgba(46, 109, 164, 0.1);
+      }
+      .field-group input.error,
+      .field-group textarea.error {
+        border-color: var(--red);
+        background: rgba(192, 0, 0, 0.03);
+      }
+      .field-group .field-hint {
+        font-size: 0.72rem;
+        color: var(--grey-text);
+        margin-top: 4px;
+        font-style: italic;
+      }
+      .field-row {
+        display: flex;
+        gap: 12px;
+      }
+      .field-row .field-group {
+        flex: 1;
+      }
+
+      /* Lines table */
+      .lines-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 20px 0 10px;
+      }
+      .lines-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        border: 1px solid var(--grey-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .lines-table th {
+        font-size: 0.63rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: var(--blue-dark);
+        color: #fff;
+        padding: 9px 12px;
+        text-align: left;
+      }
+      .lines-table td {
+        padding: 5px 8px;
+        border-bottom: 1px solid var(--blue-pale);
+        vertical-align: middle;
+      }
+      .lines-table tbody tr:hover td {
+        background: var(--blue-pale);
+      }
+      .lines-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .lines-table .drag-handle {
+        cursor: grab;
+        color: var(--grey-text);
+        font-size: 0.9rem;
+        padding: 0 4px;
+      }
+      .lines-table input[type="text"],
+      .lines-table input[type="number"] {
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.88rem;
+        width: 100%;
+        background: transparent;
+        color: var(--blue-dark);
+        outline: none;
+        transition: all 0.15s;
+      }
+      .lines-table input:hover {
+        border-color: var(--grey-border);
+        background: var(--white);
+      }
+      .lines-table input:focus {
+        border-color: var(--blue-mid);
+        background: var(--white);
+        box-shadow: 0 0 0 2px rgba(46, 109, 164, 0.1);
+      }
+      .lines-table input.error {
+        border-color: var(--red) !important;
+        background: rgba(192, 0, 0, 0.04);
+      }
+      .lines-table .pct-cell {
+        font-size: 0.72rem;
+        color: var(--grey-text);
+        white-space: nowrap;
+      }
+      .btn-icon {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 4px 6px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        color: var(--grey-text);
+        transition: all 0.15s;
+      }
+      .btn-icon:hover {
+        background: rgba(192, 0, 0, 0.08);
+        color: var(--red);
+      }
+      .btn-icon.add:hover {
+        background: var(--blue-pale);
+        color: var(--blue-mid);
+      }
+
+      /* Items */
+      .items-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .item-card {
+        border: 1px solid var(--grey-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--white);
+        box-shadow: var(--shadow);
+      }
+      .item-card-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 12px;
+        background: var(--grey-bg);
+        cursor: pointer;
+        border-bottom: 1px solid var(--grey-border);
+      }
+      .item-card-header .drag-handle {
+        cursor: grab;
+        color: var(--grey-text);
+      }
+      .item-title-input {
+        flex: 1;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.88rem;
+        font-weight: 600;
+        background: transparent;
+        color: var(--blue-dark);
+        outline: none;
+        transition: all 0.15s;
+      }
+      .item-title-input:hover {
+        border-color: var(--grey-border);
+        background: var(--white);
+      }
+      .item-title-input:focus {
+        border-color: var(--blue-mid);
+        background: var(--white);
+      }
+      .item-card-body {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* References */
+      .ref-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 10px;
+        background: var(--blue-pale);
+        border-radius: var(--radius);
+        flex-wrap: wrap;
+      }
+      .ref-row select,
+      .ref-row input[type="number"] {
+        border: 1.5px solid var(--grey-border);
+        border-radius: 4px;
+        padding: 5px 8px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.82rem;
+        background: var(--white);
+        color: var(--blue-dark);
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .ref-row select:focus,
+      .ref-row input:focus {
+        border-color: var(--blue-mid);
+      }
+      .ref-row .ref-label {
+        font-size: 0.63rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--blue-mid);
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .ref-row .ref-target-select {
+        flex: 1;
+        min-width: 120px;
+      }
+      .ref-row input[type="number"] {
+        width: 60px;
+        text-align: center;
+      }
+      .ref-row .min-max-group {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .ref-row .min-max-group.hidden {
+        display: none;
+      }
+
+      /* Validation banner */
+      .validation-banner {
+        background: rgba(192, 0, 0, 0.07);
+        border: 1px solid rgba(192, 0, 0, 0.25);
+        color: var(--red);
+        border-radius: var(--radius);
+        padding: 10px 14px;
+        margin-bottom: 14px;
+        font-size: 0.84rem;
+        display: none;
+      }
+      .validation-banner.show {
+        display: block;
+      }
+      .validation-banner ul {
+        margin: 6px 0 0 16px;
+      }
+
+      /* Graph panel */
+      .graph-panel {
+        margin-top: 16px;
+      }
+      .graph-panel .card {
+        overflow: visible;
+      }
+      .graph-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 14px 20px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        color: var(--blue-mid);
+        text-transform: uppercase;
+        user-select: none;
+      }
+      .graph-toggle .chevron {
+        transition: transform 0.2s;
+        font-style: normal;
+      }
+      .graph-toggle.open .chevron {
+        transform: rotate(90deg);
+      }
+      .graph-body {
+        padding: 0 20px 20px;
+        display: none;
+      }
+      .graph-body.open {
+        display: block;
+      }
+      .graph-svg-wrap {
+        overflow: auto;
+        border: 1px solid var(--grey-border);
+        border-radius: var(--radius);
+        background: var(--white);
+        min-height: 100px;
+      }
+      .graph-empty {
+        padding: 24px;
+        text-align: center;
+        color: var(--grey-text);
+        font-style: italic;
+        font-size: 0.88rem;
+      }
+
+      /* Context menu */
+      .ctx-menu {
+        position: fixed;
+        background: var(--white);
+        border: 1px solid var(--grey-border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        z-index: 1000;
+        min-width: 160px;
+        overflow: hidden;
+        display: none;
+      }
+      .ctx-menu.show {
+        display: block;
+      }
+      .ctx-item {
+        padding: 9px 16px;
+        cursor: pointer;
+        font-size: 0.86rem;
+        transition: background 0.12s;
+      }
+      .ctx-item:hover {
+        background: var(--blue-pale);
+      }
+      .ctx-item.danger {
+        color: var(--red);
+      }
+      .ctx-item.danger:hover {
+        background: rgba(192, 0, 0, 0.07);
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(30, 58, 95, 0.45);
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-overlay.show {
+        display: flex;
+      }
+      .modal {
+        background: var(--white);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        padding: 28px;
+        max-width: 480px;
+        width: 90%;
+      }
+      .modal h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--blue-dark);
+        margin-bottom: 12px;
+      }
+      .modal p {
+        font-size: 0.9rem;
+        color: var(--grey-text);
+        margin-bottom: 16px;
+        line-height: 1.6;
+      }
+      .modal textarea {
+        width: 100%;
+        min-height: 120px;
+        border: 1.5px solid var(--grey-border);
+        border-radius: var(--radius);
+        padding: 10px;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.88rem;
+        resize: vertical;
+        outline: none;
+        transition: border-color 0.18s;
+      }
+      .modal textarea:focus {
+        border-color: var(--blue-mid);
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 16px;
+      }
+      .btn-cancel {
+        background: var(--white);
+        border: 1.5px solid var(--grey-border);
+        color: var(--grey-text);
+        font-family: "Outfit", sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 8px 18px;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: all 0.18s;
+      }
+      .btn-cancel:hover {
+        border-color: var(--blue-mid);
+        color: var(--blue-mid);
+      }
+      .btn-confirm {
+        background: var(--blue-mid);
+        border: none;
+        color: #fff;
+        font-family: "Outfit", sans-serif;
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 8px 18px;
+        cursor: pointer;
+        border-radius: var(--radius);
+        transition: all 0.18s;
+      }
+      .btn-confirm:hover {
+        background: var(--blue-dark);
+      }
+      .btn-confirm.danger {
+        background: var(--red);
+      }
+      .btn-confirm.danger:hover {
+        background: #a00000;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 22px 0;
+        font-size: 0.6rem;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--grey-text);
+      }
+
+      @media (max-width: 700px) {
+        .editor-layout {
+          flex-direction: column;
+        }
+        .ed-sidebar {
+          width: 100%;
+        }
+        .controls-row {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- HEADER -->
+      <header>
+        <button
+          class="lang-btn"
+          id="langBtn"
+          onclick="toggleLang()"
+          aria-label="Changer la langue / Switch language"
+        >
+          EN
+        </button>
+        <span class="header-ornament">✦ ✦ ✦</span>
+        <h1 class="app-title">Gentab<span class="v">v3</span></h1>
+        <p class="app-subtitle" id="appSubtitle">
+          Outil de génération aléatoire
+        </p>
+        <div style="margin-top: 10px">
+          <span class="file-status none" id="fileStatus">
+            ◈ <span data-i18n="status.nofile">Aucun fichier chargé</span>
+          </span>
+        </div>
+        <!-- FILE LOAD (above tabs) -->
+        <div
+          style="
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+          "
+        >
+          <input
+            type="file"
+            id="fileInput"
+            accept=".gntb"
+            onchange="loadFile(event)"
+          />
+          <button
+            class="btn-load"
+            onclick="document.getElementById('fileInput').click()"
+            aria-label="Charger un fichier .gntb"
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+              <path
+                d="M8 1a.5.5 0 0 1 .5.5v7.793l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V1.5A.5.5 0 0 1 8 1zM2 13a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"
+              />
+            </svg>
+            <span data-i18n="btn.load">Charger</span>
+          </button>
+        </div>
+        <!-- TABS -->
+        <div class="tab-bar" role="tablist" aria-label="Modes">
+          <button
+            class="tab-btn active"
+            id="tabDrawBtn"
+            role="tab"
+            aria-selected="true"
+            aria-controls="tabDraw"
+            onclick="switchTab('draw')"
+          >
+            ⚄ <span data-i18n="tab.draw">Tirer</span>
+          </button>
+          <button
+            class="tab-btn"
+            id="tabEditBtn"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tabEdit"
+            onclick="switchTab('edit')"
+          >
+            ✎ <span data-i18n="tab.edit">Éditer</span
+            ><span class="dirty" id="dirtyMark" style="display: none">*</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- ══ TAB: DRAW ══ -->
+      <div
+        class="tab-content active"
+        id="tabDraw"
+        role="tabpanel"
+        aria-labelledby="tabDrawBtn"
+      >
+        <div class="message-bar" id="msgBar" role="alert" aria-live="assertive">
+          <span id="msgIcon">⚠</span><span id="msgText"></span>
+        </div>
+
+        <div class="card control-panel">
+          <div class="panel-title" data-i18n="panel.controls">Contrôles</div>
+          <div class="controls-row">
+            <div class="control-group wide">
+              <label class="ctrl-label" id="labelSeq" data-i18n="label.sequence"
+                >Séquence</label
+              >
+              <div class="select-wrapper">
+                <select
+                  class="ctrl-select"
+                  id="seqSelect"
+                  disabled
+                  onchange="onSeqChange()"
+                  aria-labelledby="labelSeq"
+                ></select>
+              </div>
+              <div class="seq-desc" id="seqDesc"></div>
+            </div>
+            <div class="control-group narrow">
+              <label class="ctrl-label" id="labelDraws" data-i18n="label.draws"
+                >Tirages</label
+              >
+              <input
+                type="number"
+                class="ctrl-input"
+                id="drawCount"
+                value="5"
+                min="1"
+                max="100"
+                aria-labelledby="labelDraws"
+              />
+            </div>
+            <div class="control-group narrow" style="flex: 0 0 auto">
+              <label class="ctrl-label">&nbsp;</label>
+              <button
+                class="btn-primary"
+                id="drawBtn"
+                disabled
+                onclick="doDraw()"
+                aria-label="Effectuer le tirage"
+              >
+                <span data-i18n="btn.draw">⚄ Tirer</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card results-panel">
+          <div class="results-header">
+            <div
+              class="panel-title"
+              style="margin-bottom: 0"
+              data-i18n="panel.results"
+            >
+              Résultats
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+              "
+            >
+              <span class="badge-count empty" id="badgeCount">—</span>
+              <div class="results-actions">
+                <button
+                  class="btn-action"
+                  id="copyBtn"
+                  disabled
+                  onclick="copyResults()"
+                  data-i18n="btn.copy"
+                  aria-label="Copier les résultats dans le presse-papier"
+                >
+                  Copier
+                </button>
+                <button
+                  class="btn-action"
+                  id="clearBtn"
+                  disabled
+                  onclick="clearResults()"
+                  data-i18n="btn.clear"
+                  aria-label="Effacer les résultats"
+                >
+                  Effacer
+                </button>
+              </div>
+            </div>
+          </div>
+          <div
+            class="table-scroll"
+            id="tableScroll"
+            aria-live="polite"
+            aria-label="Résultats des tirages"
+          >
+            <div class="empty-state" id="emptyState">
+              <span class="rune">⚄ ⚅ ⚂</span>
+              <span id="emptyHint" data-i18n="empty.hint"
+                >Chargez un fichier et lancez les dés…</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /tabDraw -->
+
+      <!-- ══ TAB: EDIT ══ -->
+      <div
+        class="tab-content"
+        id="tabEdit"
+        role="tabpanel"
+        aria-labelledby="tabEditBtn"
+        aria-hidden="true"
+      >
+        <!-- Toolbar -->
+        <div class="ed-toolbar">
+          <button
+            class="btn-tool"
+            onclick="edNew()"
+            data-i18n="btn.new"
+            aria-label="Nouveau"
+          >
+            Nouveau
+          </button>
+          <input
+            type="file"
+            id="edFileInput"
+            accept=".gntb"
+            onchange="edOpen(event)"
+            style="display: none"
+          />
+          <button
+            class="btn-tool"
+            onclick="document.getElementById('edFileInput').click()"
+            data-i18n="btn.open"
+            aria-label="Ouvrir"
+          >
+            Ouvrir
+          </button>
+          <button
+            class="btn-tool"
+            id="edSaveBtn"
+            onclick="edSave()"
+            disabled
+            data-i18n="btn.save"
+            aria-label="Enregistrer"
+          >
+            Enregistrer
+          </button>
+          <button
+            class="btn-tool"
+            id="edSaveAsBtn"
+            onclick="edSaveAs()"
+            disabled
+            data-i18n="btn.saveAs"
+            aria-label="Enregistrer sous…"
+          >
+            Enregistrer sous…
+          </button>
+        </div>
+
+        <!-- Validation banner -->
+        <div
+          class="validation-banner"
+          id="validationBanner"
+          role="alert"
+          aria-live="polite"
+        ></div>
+
+        <div class="editor-layout">
+          <!-- LEFT: Sidebar -->
+          <div class="ed-sidebar">
+            <!-- Meta card -->
+            <div class="card">
+              <div class="ed-meta">
+                <label id="labelCollTitle" data-i18n="label.collTitle"
+                  >Titre</label
+                >
+                <input
+                  type="text"
+                  id="edCollTitle"
+                  placeholder=""
+                  data-i18n-ph="placeholder.collTitle"
+                  oninput="edUpdateMeta()"
+                  aria-labelledby="labelCollTitle"
+                />
+                <label id="labelCollDesc" data-i18n="label.collDesc"
+                  >Description</label
+                >
+                <textarea
+                  id="edCollDesc"
+                  rows="2"
+                  placeholder=""
+                  data-i18n-ph="placeholder.collDesc"
+                  oninput="edUpdateMeta()"
+                  aria-labelledby="labelCollDesc"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Tables -->
+            <div class="card">
+              <div class="tree-section">
+                <div class="tree-section-header">
+                  <span class="tree-section-title" data-i18n="label.tableList"
+                    >Tables</span
+                  >
+                  <button
+                    class="btn-tree-add"
+                    data-i18n-title="title.newTable"
+                    data-i18n-aria="title.newTable"
+                    onclick="edAddTable()"
+                    aria-label="Nouvelle table"
+                  >
+                    ＋
+                  </button>
+                </div>
+                <ul class="tree-list" id="tableList"></ul>
+              </div>
+            </div>
+
+            <!-- Sequences -->
+            <div class="card">
+              <div class="tree-section">
+                <div class="tree-section-header">
+                  <span class="tree-section-title" data-i18n="label.seqList"
+                    >Séquences</span
+                  >
+                  <button
+                    class="btn-tree-add"
+                    data-i18n-title="title.newSeq"
+                    data-i18n-aria="title.newSeq"
+                    onclick="edAddSequence()"
+                    aria-label="Nouvelle séquence"
+                  >
+                    ＋
+                  </button>
+                </div>
+                <ul class="tree-list" id="seqList"></ul>
+              </div>
+            </div>
+          </div>
+          <!-- /sidebar -->
+
+          <!-- RIGHT: Form area -->
+          <div class="ed-main">
+            <div class="card" id="edFormCard">
+              <div class="ed-form-empty" id="edFormEmpty">
+                <span class="icon">✎</span>
+                <span data-i18n="edit.selectHint"
+                  >Sélectionnez ou créez une table ou une séquence.</span
+                >
+              </div>
+              <div class="ed-form" id="edFormTable" style="display: none"></div>
+              <div class="ed-form" id="edFormSeq" style="display: none"></div>
+            </div>
+
+            <!-- Graph -->
+            <div class="graph-panel">
+              <div class="card">
+                <div
+                  class="graph-toggle"
+                  id="graphToggle"
+                  onclick="toggleGraph()"
+                  role="button"
+                  tabindex="0"
+                  aria-expanded="false"
+                  onkeydown="
+                    if (event.key === 'Enter' || event.key === ' ')
+                      toggleGraph();
+                  "
+                >
+                  <span class="chevron">▸</span>
+                  <span data-i18n="graph.title">Graphe de dépendances</span>
+                </div>
+                <div class="graph-body" id="graphBody">
+                  <div class="graph-svg-wrap" id="graphWrap"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /editor-layout -->
+      </div>
+      <!-- /tabEdit -->
+
+      <footer>
+        <span id="footerMain" data-i18n="footer.main"
+          >GENTAB v3 · OUTIL DE GÉNÉRATION ALÉATOIRE · STANDALONE</span
+        >
+        <br />
+        <span style="font-size: 0.55rem; opacity: 0.6">
+          "THE BEER-WARE LICENSE" — As long as you retain this notice you can do
+          whatever you want with this software. If we meet some day, and you
+          think this is worth it, you can buy me a beer in return.
+        </span>
+      </footer>
+    </div>
+
+    <!-- Context menu -->
+    <div class="ctx-menu" id="ctxMenu" role="menu" aria-label="Options">
+      <div
+        class="ctx-item"
+        id="ctxRename"
+        role="menuitem"
+        tabindex="0"
+        onclick="ctxAction('rename')"
+        onkeydown="if (event.key === 'Enter') ctxAction('rename');"
+      ></div>
+      <div
+        class="ctx-item"
+        id="ctxDuplicate"
+        role="menuitem"
+        tabindex="0"
+        onclick="ctxAction('duplicate')"
+        onkeydown="if (event.key === 'Enter') ctxAction('duplicate');"
+      ></div>
+      <div
+        class="ctx-item danger"
+        id="ctxDelete"
+        role="menuitem"
+        tabindex="0"
+        onclick="ctxAction('delete')"
+        onkeydown="if (event.key === 'Enter') ctxAction('delete');"
+      ></div>
+    </div>
+
+    <!-- Modal: confirm / import -->
+    <div
+      class="modal-overlay"
+      id="modalOverlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modalTitle"
+    >
+      <div class="modal">
+        <h3 id="modalTitle"></h3>
+        <p id="modalBody"></p>
+        <textarea id="modalTextarea" style="display: none"></textarea>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeModal()">
+            <span data-i18n="btn.cancel">Annuler</span>
+          </button>
+          <button
+            class="btn-confirm"
+            id="modalConfirm"
+            onclick="modalConfirmFn && modalConfirmFn()"
+          >
+            Confirmer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ══════════════════════════════════════════════════════════════════════
+      //  i18n — Internationalisation
+      //  Objet de traduction à deux entrées (fr / en). Chaque clé est une
+      //  chaîne identifiant un élément de l'interface. Le contenu des fichiers
+      //  .gntb (noms de tables, séquences, lignes) n'est jamais traduit.
+      // ══════════════════════════════════════════════════════════════════════
+      const I18N = {
+        fr: {
+          "app.subtitle": "Outil de génération aléatoire",
+          "status.nofile": "Aucun fichier chargé",
+          "status.ok": "Fichier chargé",
+          "status.warn": "Chargé avec avertissements",
+          "status.error": "Fichier invalide",
+          "tab.draw": "Tirer",
+          "tab.edit": "Éditer",
+          "panel.controls": "Contrôles",
+          "panel.results": "Résultats",
+          "label.file": "Fichier",
+          "label.sequence": "Séquence",
+          "label.draws": "Tirages",
+          "label.tableList": "Tables",
+          "label.seqList": "Séquences",
+          "label.collTitle": "Titre",
+          "label.collDesc": "Description",
+          "btn.load": "Charger",
+          "btn.draw": "⚄ Tirer",
+          "btn.copy": "Copier",
+          "btn.clear": "Effacer",
+          "btn.new": "Nouveau",
+          "btn.open": "Ouvrir",
+          "btn.save": "Enregistrer",
+          "btn.saveAs": "Enregistrer sous…",
+          "btn.cancel": "Annuler",
+          "btn.confirm": "Confirmer",
+          "btn.addLine": "+ Ajouter une ligne",
+          "btn.addItem": "+ Ajouter un item",
+          "btn.addRef": "+ Référence",
+          "btn.importLines": "Importer des lignes",
+          "btn.duplicate": "Dupliquer",
+          "btn.delete": "Supprimer",
+          "badge.empty": "—",
+          "empty.hint": "Chargez un fichier et lancez les dés…",
+          "edit.selectHint": "Sélectionnez ou créez une table ou une séquence.",
+          "edit.tableTitle": "Table",
+          "edit.seqTitle": "Séquence",
+          "label.tableName": "Nom de la table",
+          "label.tableId": "ID (lecture seule)",
+          "label.seqName": "Nom de la séquence",
+          "label.seqDesc": "Description",
+          "label.lineContent": "Contenu",
+          "label.lineWeight": "Poids",
+          "label.linePct": "%",
+          "label.itemTitle": "Titre item",
+          "label.refType": "Type",
+          "label.refTarget": "Cible",
+          "label.refWeight": "Poids",
+          "label.refMin": "Min",
+          "label.refMax": "Max",
+          "label.refTypeTable": "Table",
+          "label.refTypeSeq": "Séquence",
+          "graph.title": "Graphe de dépendances",
+          "graph.empty": "Aucune dépendance entre séquences",
+          "msg.parse_error": "Erreur de lecture du fichier .gntb.",
+          "msg.no_sequences": "Ce fichier ne contient aucune séquence.",
+          "msg.circular": "Séquences avec références circulaires : ",
+          "msg.no_unique":
+            "Seulement %d combinaisons uniques disponibles (demandé : %n).",
+          "msg.copied": "Résultats copiés dans le presse-papier !",
+          "msg.draw_circular":
+            "Cette séquence contient une référence circulaire. Tirage impossible.",
+          "msg.saved": "Fichier enregistré : %f",
+          "msg.unsaved": "Des modifications non sauvegardées seront perdues.",
+          "msg.deleteTable": "Supprimer la table « %n » ?",
+          "msg.deleteSeq": "Supprimer la séquence « %n » ?",
+          "msg.deleteOrphans":
+            "Les références orphelines dans les séquences seront supprimées.",
+          "msg.importTitle": "Importer des lignes",
+          "msg.importHint": "Une valeur par ligne, ou valeur;poids",
+          "msg.importPreview": "%n ligne(s) détectée(s).",
+          "msg.newCollection": "Nouvelle collection",
+          "msg.noCollection": "Ouvrez ou créez une collection pour commencer.",
+          "cell.loop": "[boucle]",
+          "cell.unknown_tbl": "[table?]",
+          "cell.unknown_seq": "[seq?]",
+          "cell.empty": "—",
+          langbtn: "EN",
+          "placeholder.collTitle": "Titre de la collection",
+          "placeholder.collDesc": "Description (optionnel)",
+          "placeholder.lineContent": "Contenu",
+          "title.newTable": "Nouvelle table",
+          "title.newSeq": "Nouvelle séquence",
+          "label.items": "Items",
+          "label.line": "ligne",
+          "label.lines": "lignes",
+          "label.copyOf": "Copie de ",
+          "btn.rename": "Renommer",
+          "prompt.filename": "Nom du fichier :",
+          "footer.main":
+            "GENTAB v3 · OUTIL DE GÉNÉRATION ALÉATOIRE · STANDALONE",
+          "val.titleRequired": "Le titre de la collection est obligatoire.",
+          "val.tableNameRequired": "Nom de table obligatoire.",
+          "val.tableNoLines": "La table doit contenir au moins une ligne.",
+          "val.lineEmptyContent": "Une ligne a un contenu vide.",
+          "val.seqNameRequired": "Nom de séquence obligatoire.",
+          "val.seqNoItems": "La séquence doit contenir au moins un item.",
+          "val.itemNoTitle": "Un item a un titre vide.",
+          "val.itemNoRef": "Un item n'a aucune référence.",
+          "val.refNoTarget": "Une référence n'a pas de cible.",
+          "val.refMaxMinError": "Max doit être ≥ Min.",
+          "val.circular": "Référence circulaire détectée.",
+        },
+        en: {
+          "app.subtitle": "Random generation tool",
+          "status.nofile": "No file loaded",
+          "status.ok": "File loaded",
+          "status.warn": "Loaded with warnings",
+          "status.error": "Invalid file",
+          "tab.draw": "Draw",
+          "tab.edit": "Edit",
+          "panel.controls": "Controls",
+          "panel.results": "Results",
+          "label.file": "File",
+          "label.sequence": "Sequence",
+          "label.draws": "Draws",
+          "label.tableList": "Tables",
+          "label.seqList": "Sequences",
+          "label.collTitle": "Title",
+          "label.collDesc": "Description",
+          "btn.load": "Load",
+          "btn.draw": "⚄ Draw",
+          "btn.copy": "Copy",
+          "btn.clear": "Clear",
+          "btn.new": "New",
+          "btn.open": "Open",
+          "btn.save": "Save",
+          "btn.saveAs": "Save as…",
+          "btn.cancel": "Cancel",
+          "btn.confirm": "Confirm",
+          "btn.addLine": "+ Add a line",
+          "btn.addItem": "+ Add an item",
+          "btn.addRef": "+ Reference",
+          "btn.importLines": "Import lines",
+          "btn.duplicate": "Duplicate",
+          "btn.delete": "Delete",
+          "badge.empty": "—",
+          "empty.hint": "Load a file and roll the dice…",
+          "edit.selectHint": "Select or create a table or sequence.",
+          "edit.tableTitle": "Table",
+          "edit.seqTitle": "Sequence",
+          "label.tableName": "Table name",
+          "label.tableId": "ID (read only)",
+          "label.seqName": "Sequence name",
+          "label.seqDesc": "Description",
+          "label.lineContent": "Content",
+          "label.lineWeight": "Weight",
+          "label.linePct": "%",
+          "label.itemTitle": "Item title",
+          "label.refType": "Type",
+          "label.refTarget": "Target",
+          "label.refWeight": "Weight",
+          "label.refMin": "Min",
+          "label.refMax": "Max",
+          "label.refTypeTable": "Table",
+          "label.refTypeSeq": "Sequence",
+          "graph.title": "Dependency graph",
+          "graph.empty": "No dependencies between sequences",
+          "msg.parse_error": "Error reading .gntb file.",
+          "msg.no_sequences": "This file contains no sequences.",
+          "msg.circular": "Sequences with circular references: ",
+          "msg.no_unique":
+            "Only %d unique combinations available (requested: %n).",
+          "msg.copied": "Results copied to clipboard!",
+          "msg.draw_circular":
+            "This sequence has a circular reference. Cannot draw.",
+          "msg.saved": "File saved: %f",
+          "msg.unsaved": "Unsaved changes will be lost.",
+          "msg.deleteTable": "Delete table « %n »?",
+          "msg.deleteSeq": "Delete sequence « %n »?",
+          "msg.deleteOrphans":
+            "Orphan references in sequences will be removed.",
+          "msg.importTitle": "Import lines",
+          "msg.importHint": "One value per line, or value;weight",
+          "msg.importPreview": "%n line(s) detected.",
+          "msg.newCollection": "New collection",
+          "msg.noCollection": "Open or create a collection to start.",
+          "cell.loop": "[loop]",
+          "cell.unknown_tbl": "[table?]",
+          "cell.unknown_seq": "[seq?]",
+          "cell.empty": "—",
+          langbtn: "FR",
+          "placeholder.collTitle": "Collection title",
+          "placeholder.collDesc": "Description (optional)",
+          "placeholder.lineContent": "Content",
+          "title.newTable": "New table",
+          "title.newSeq": "New sequence",
+          "label.items": "Items",
+          "label.line": "line",
+          "label.lines": "lines",
+          "label.copyOf": "Copy of ",
+          "btn.rename": "Rename",
+          "prompt.filename": "File name:",
+          "footer.main": "GENTAB v3 · RANDOM GENERATION TOOL · STANDALONE",
+          "val.titleRequired": "Collection title is required.",
+          "val.tableNameRequired": "Table name is required.",
+          "val.tableNoLines": "Table must have at least one line.",
+          "val.lineEmptyContent": "A line has empty content.",
+          "val.seqNameRequired": "Sequence name is required.",
+          "val.seqNoItems": "Sequence must have at least one item.",
+          "val.itemNoTitle": "An item has no title.",
+          "val.itemNoRef": "An item has no reference.",
+          "val.refNoTarget": "A reference has no target.",
+          "val.refMaxMinError": "Max must be ≥ Min.",
+          "val.circular": "Circular reference detected.",
+        },
+      };
+      let lang = (navigator.language || "fr").startsWith("fr") ? "fr" : "en";
+      /**
+       * Retourne la chaîne traduite pour la clé k dans la langue active.
+       * Substitutions : %d → vars.d, %n → vars.n, %f → vars.f
+       * @param {string} k   - Clé i18n (ex. 'btn.save')
+       * @param {Object} v   - Variables de substitution optionnelles
+       * @returns {string}
+       */
+      function t(k, v = {}) {
+        let s = I18N[lang][k] || k;
+        if (v.d !== undefined) s = s.replace("%d", v.d);
+        if (v.n !== undefined) s = s.replace("%n", v.n);
+        if (v.f !== undefined) s = s.replace("%f", v.f);
+        return s;
+      }
+      /**
+       * Applique la langue active à tous les éléments traduisibles du DOM :
+       *  - [data-i18n]       → textContent
+       *  - [data-i18n-ph]    → placeholder
+       *  - [data-i18n-title] → attribut title
+       * Re-rend également les composants dynamiques de l'éditeur.
+       */
+      function applyLang() {
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const k = el.getAttribute("data-i18n");
+          if (I18N[lang][k] !== undefined) el.textContent = I18N[lang][k];
+        });
+        // Placeholders
+        document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+          const k = el.getAttribute("data-i18n-ph");
+          if (I18N[lang][k] !== undefined) el.placeholder = I18N[lang][k];
+        });
+        // Title attributes
+        document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+          const k = el.getAttribute("data-i18n-title");
+          if (I18N[lang][k] !== undefined) el.title = I18N[lang][k];
+        });
+        // aria-label (data-i18n-aria)
+        document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+          const k = el.getAttribute("data-i18n-aria");
+          if (I18N[lang][k] !== undefined)
+            el.setAttribute("aria-label", I18N[lang][k]);
+        });
+        // Sync lang button aria-label
+        document
+          .getElementById("langBtn")
+          .setAttribute(
+            "aria-label",
+            lang === "fr" ? "Switch to English" : "Passer en français",
+          );
+        // Modal confirm button text
+        const mc = document.getElementById("modalConfirm");
+        if (mc) mc.textContent = t("btn.confirm");
+        document.getElementById("langBtn").textContent = t("langbtn");
+        document.getElementById("appSubtitle").textContent = t("app.subtitle");
+        updateFileStatus();
+        if (state.collection) populateSequences();
+        if (ed.collection) {
+          edRenderSidebar();
+          edRenderForm();
+          edRenderGraph();
+          edValidate();
+        }
+      }
+      function toggleLang() {
+        lang = lang === "fr" ? "en" : "fr";
+        applyLang();
+        try {
+          localStorage.setItem("gentab_lang", lang);
+        } catch (e) {}
+      }
+
+      // ══════════════════════════════════════════════════════════════════════
+      //  Navigation par onglets
+      //  Deux onglets partagent le même DOM et le même état en mémoire :
+      //  "draw" (Gentab v3 — tirage) et "edit" (Gentab Editor — édition).
+      // ══════════════════════════════════════════════════════════════════════
+      function switchTab(name) {
+        document.querySelectorAll(".tab-content").forEach((el) => {
+          el.classList.remove("active");
+          el.setAttribute("aria-hidden", "true");
+        });
+        document.querySelectorAll(".tab-btn").forEach((el) => {
+          el.classList.remove("active");
+          el.setAttribute("aria-selected", "false");
+        });
+        const panel = document.getElementById(
+          "tab" + name.charAt(0).toUpperCase() + name.slice(1),
+        );
+        panel.classList.add("active");
+        panel.setAttribute("aria-hidden", "false");
+        const btn = document.getElementById(
+          "tab" + name.charAt(0).toUpperCase() + name.slice(1) + "Btn",
+        );
+        btn.classList.add("active");
+        btn.setAttribute("aria-selected", "true");
+      }
+
+      // ══════════════════════════════════════════════════════════════════════
+      //  État du module de tirage (onglet Tirer)
+      //  Alimenté par parseGntb() à chaque chargement de fichier, et par
+      //  edSyncToDrawState() après chaque modification dans l'éditeur.
+      // ══════════════════════════════════════════════════════════════════════
+      const state = {
+        collection: null,
+        tableMap: {},
+        seqMap: {},
+        circularIds: new Set(),
+        fileName: "",
+        results: [],
+        headers: [],
+      };
+      const emptyEl = document.getElementById("emptyState");
+
+      // ── File load ──
+      /**
+       * Déclenché par le sélecteur de fichier natif.
+       * Lit le fichier .gntb sélectionné en UTF-8 via FileReader,
+       * puis appelle parseGntb() et met à jour l'éditeur en parallèle.
+       * @param {Event} evt - Événement change de l'<input type="file">
+       */
+      function loadFile(evt) {
+        const file = evt.target.files[0];
+        if (!file) return;
+        state.fileName = file.name;
+        const reader = new FileReader();
+        reader.onload = (e) => parseGntb(e.target.result);
+        reader.readAsText(file, "UTF-8");
+      }
+
+      /**
+       * Parse et normalise le contenu JSON d'un fichier .gntb.
+       * Supporte les formats v1 (encapsulé dans Collection{}) et v2 (racine nue).
+       * Normalise les noms de champs (ID/id, nom/name) et convertit les poids
+       * en entiers. Appelle detectCircular() après le chargement.
+       * @param {string}  text   - Contenu JSON brut du fichier
+       * @param {boolean} silent - Si true, n'affiche pas de messages UI
+       * @returns {Object|null}  - Objet collection parsé, ou null en cas d'erreur
+       */
+      function parseGntb(text, silent) {
+        if (!silent) clearResults();
+        state.collection = null;
+        state.tableMap = {};
+        state.seqMap = {};
+        state.circularIds = new Set();
+        let raw;
+        try {
+          raw = JSON.parse(text);
+        } catch (e) {
+          if (!silent) {
+            showMsg("error", t("msg.parse_error"));
+            setFileStatus("error");
+          }
+          return null;
+        }
+        const col = raw.Collection || raw;
+        const tables = col.tables || [];
+        const sequences = col.sequences || [];
+        if (!sequences.length && !silent) {
+          showMsg("warn", t("msg.no_sequences"));
+          setFileStatus("warn");
+        }
+        tables.forEach((tbl) => {
+          const id = stripPrefix(tbl.ID || tbl.id || "");
+          state.tableMap[id] = {
+            id,
+            nom: tbl.nom || tbl.name || id,
+            lignes: (tbl.lignes || []).map((l) => ({
+              contenu: (l.contenu || "").trim(),
+              poids: Math.max(1, parseInt(l.poids, 10) || 1),
+            })),
+          };
+        });
+        sequences.forEach((seq, idx) => {
+          const rawId = seq.id || seq.ID || null;
+          const id = rawId ? stripPrefix(rawId) : "__seq_" + idx;
+          state.seqMap[id] = {
+            id,
+            nom: seq.nom || id,
+            description: seq.description || "",
+            items: seq.items || [],
+          };
+        });
+        detectCircular();
+        state.collection = col;
+        if (!silent) {
+          populateSequences();
+          const w = state.circularIds.size > 0;
+          setFileStatus(w ? "warn" : "ok");
+          if (w) {
+            const names = [...state.circularIds]
+              .map((id) => (state.seqMap[id] || {}).nom || id)
+              .join(", ");
+            showMsg("warn", t("msg.circular") + names);
+          } else hideMsg();
+        }
+        return col;
+      }
+
+      /**
+       * Retire le préfixe tbl: ou seq: d'un ID de référence .gntb.
+       * Les IDs des objets Table et Séquence eux-mêmes sont stockés sans préfixe ;
+       * le préfixe n'apparaît que dans les champs references[].ID.
+       * @param {string} id - ID brut (ex. "tbl:uuid" ou "uuid")
+       * @returns {string}  - UUID sans préfixe
+       */
+      function stripPrefix(id) {
+        if (id.startsWith("tbl:")) return id.slice(4);
+        if (id.startsWith("seq:")) return id.slice(4);
+        return id;
+      }
+
+      // ── Circular detection ──
+      /**
+       * Détecte les cycles dans le graphe de dépendances seq: → seq:
+       * via un parcours en profondeur (DFS) avec marquage tricolore :
+       *   WHITE = non visité, GREY = en cours de visite, BLACK = terminé.
+       * Tout nœud rencontré à l'état GREY lors d'une visite constitue un cycle.
+       * Les séquences impliquées sont ajoutées à state.circularIds.
+       * Appelé après chaque chargement de fichier.
+       */
+      function detectCircular() {
+        const WHITE = 0,
+          GREY = 1,
+          BLACK = 2;
+        const color = {};
+        Object.keys(state.seqMap).forEach((id) => (color[id] = WHITE));
+        function dfs(id) {
+          if (color[id] === GREY) {
+            state.circularIds.add(id);
+            return true;
+          }
+          if (color[id] === BLACK) return false;
+          color[id] = GREY;
+          const seq = state.seqMap[id];
+          if (seq)
+            for (const item of seq.items || [])
+              for (const ref of item.references || []) {
+                const rid = ref.ID || ref.id || "";
+                if (rid.startsWith("seq:")) {
+                  const tid = rid.slice(4);
+                  if (dfs(tid)) state.circularIds.add(id);
+                }
+              }
+          color[id] = BLACK;
+          return false;
+        }
+        Object.keys(state.seqMap).forEach((id) => {
+          if (color[id] === WHITE) dfs(id);
+        });
+      }
+
+      // ── Sequences selector ──
+      function populateSequences() {
+        const sel = document.getElementById("seqSelect");
+        sel.innerHTML = "";
+        Object.values(state.seqMap).forEach((seq) => {
+          const opt = document.createElement("option");
+          opt.value = seq.id;
+          opt.textContent =
+            seq.nom + (state.circularIds.has(seq.id) ? " ⚠" : "");
+          sel.appendChild(opt);
+        });
+        sel.disabled = false;
+        const db = document.getElementById("drawBtn");
+        db.disabled = false;
+        db.removeAttribute("aria-disabled");
+        onSeqChange();
+      }
+      function onSeqChange() {
+        const seqId = document.getElementById("seqSelect").value;
+        const seq = state.seqMap[seqId];
+        if (!seq) return;
+        const desc = document.getElementById("seqDesc");
+        if (seq.description) {
+          desc.textContent = seq.description;
+          desc.classList.add("visible");
+        } else desc.classList.remove("visible");
+        clearResults();
+      }
+
+      // ── Weighted random ──
+      /**
+       * Sélectionne un élément aléatoire dans un tableau selon un tirage pondéré.
+       * Algorithme cumulatif : tire R dans [0, somme(poids)[, parcourt les
+       * éléments en soustrayant chaque poids jusqu'à R < 0.
+       * Fallback uniforme si la somme des poids est nulle ou négative.
+       * @param {Array}    items    - Tableau d'éléments à choisir
+       * @param {Function} weightFn - Fonction retournant le poids d'un élément
+       * @returns {*} L'élément sélectionné
+       */
+      function weightedPick(items, weightFn) {
+        const total = items.reduce((s, x) => s + weightFn(x), 0);
+        if (total <= 0) return items[Math.floor(Math.random() * items.length)];
+        let r = Math.random() * total;
+        for (const item of items) {
+          r -= weightFn(item);
+          if (r < 0) return item;
+        }
+        return items[items.length - 1];
+      }
+      /**
+       * Tire entre min et max lignes dans la table identifiée par tblId.
+       * Utilise weightedPick() sur le tableau de lignes de la table.
+       * @param {string} tblId - ID de la table (sans préfixe)
+       * @param {number} min   - Nombre minimum de valeurs à tirer
+       * @param {number} max   - Nombre maximum de valeurs à tirer
+       * @returns {string|null} Valeurs jointes par ", ", ou null si table absente
+       */
+      function pickFromTable(tblId, min, max) {
+        const tbl = state.tableMap[tblId];
+        if (!tbl || !tbl.lignes.length) return null;
+        const count =
+          min === max ? min : min + Math.floor(Math.random() * (max - min + 1));
+        const res = [];
+        for (let i = 0; i < count; i++)
+          res.push(weightedPick(tbl.lignes, (l) => l.poids).contenu);
+        return res.join(", ");
+      }
+      /**
+       * Résout un item de séquence en une ou plusieurs colonnes de résultat.
+       *
+       * Implémentation avec limite de profondeur explicite (MAX_DEPTH) pour
+       * prévenir tout stack overflow, même sur des chaînes linéaires profondes
+       * sans cycle (ex. A→B→C→...→Z avec 500 niveaux).
+       *
+       * La récursion est bornée par deux gardes indépendantes :
+       *  1. callStack (Set) : détecte et stoppe les cycles (A→B→A).
+       *  2. depth (entier)  : stoppe toute chaîne dépassant MAX_DEPTH niveaux,
+       *     cycle ou pas. Retourne [boucle] si la limite est atteinte.
+       *
+       * Logique de résolution :
+       *  1. Normalisation des références (format simplifié item.id → references[]).
+       *  2. Sélection d'une référence par tirage pondéré.
+       *  3a. Cible table  → pickFromTable(min, max).
+       *  3b. Cible séquence → résolution récursive des items de la sous-séquence,
+       *      répétée entre min et max fois. Les colonnes sont injectées à plat.
+       *
+       * @param {Object} item      - Item {titre, references[]}
+       * @param {Set}    callStack - IDs de séquences en cours (anti-cycle)
+       * @param {number} depth     - Profondeur courante (défaut 0)
+       * @returns {Array<{key, value, isSeq}>}
+       */
+      const MAX_RESOLVE_DEPTH = 50; // largement suffisant pour tout fichier .gntb réel
+
+      function resolveItem(item, callStack, depth = 0) {
+        // ── Garde de profondeur ──────────────────────────────────────────
+        if (depth > MAX_RESOLVE_DEPTH) {
+          return [
+            { key: item.titre || "?", value: t("cell.loop"), isSeq: true },
+          ];
+        }
+
+        // ── Normalisation des références ─────────────────────────────────
+        let refs = item.references || [];
+        if (!refs.length && (item.id || item.ID)) {
+          const d = item.id || item.ID || "";
+          refs = [{ ID: d, poids: 10, min: 1, max: 1 }];
+        }
+        if (!refs.length)
+          return [{ key: item.titre, value: t("cell.empty"), isSeq: false }];
+
+        // ── Sélection de la référence par tirage pondéré ─────────────────
+        const ref = weightedPick(refs, (r) =>
+          Math.max(1, parseInt(r.poids, 10) || 1),
+        );
+        const rawId = ref.ID || ref.id || "";
+        const min = Math.max(1, parseInt(ref.min, 10) || 1);
+        const max = Math.max(min, parseInt(ref.max, 10) || min);
+
+        if (rawId.startsWith("seq:")) {
+          // ── Cible = séquence ─────────────────────────────────────────────
+          const seqId = rawId.slice(4);
+
+          // Garde anti-cycle (détection statique préalable, mais double sécurité)
+          if (callStack.has(seqId)) {
+            return [{ key: item.titre, value: t("cell.loop"), isSeq: true }];
+          }
+          const seq = state.seqMap[seqId];
+          if (!seq)
+            return [
+              { key: item.titre, value: t("cell.unknown_seq"), isSeq: true },
+            ];
+
+          const ns = new Set(callStack);
+          ns.add(seqId);
+
+          // Résolution répétée entre min et max fois
+          const count =
+            min === max
+              ? min
+              : min + Math.floor(Math.random() * (max - min + 1));
+          const allCols = [];
+          for (let r = 0; r < count; r++) {
+            const iterCols = [];
+            for (const si of seq.items || []) {
+              iterCols.push(...resolveItem(si, ns, depth + 1)); // depth + 1 à chaque niveau
+            }
+            // Fusion : accumuler les valeurs de chaque colonne
+            iterCols.forEach((col) => {
+              const existing = allCols.find((ac) => ac.key === col.key);
+              if (existing)
+                existing.value += (existing.value ? ", " : "") + col.value;
+              else
+                allCols.push({ key: col.key, value: col.value, isSeq: true });
+            });
+          }
+          return allCols.length
+            ? allCols
+            : [{ key: item.titre, value: t("cell.empty"), isSeq: true }];
+        } else {
+          // ── Cible = table ────────────────────────────────────────────────
+          const tblId = rawId.startsWith("tbl:") ? rawId.slice(4) : rawId;
+          if (!state.tableMap[tblId]) {
+            return [
+              { key: item.titre, value: t("cell.unknown_tbl"), isSeq: false },
+            ];
+          }
+          const val = pickFromTable(tblId, min, max);
+          return [
+            { key: item.titre, value: val || t("cell.empty"), isSeq: false },
+          ];
+        }
+      }
+
+      /**
+       * Point d'entrée du tirage. Lit les paramètres (séquence, nombre n),
+       * génère jusqu'à n combinaisons uniques (déduplication par Set de clés JSON),
+       * puis appelle renderResults().
+       * Limite de tentatives : max(200, n×100) pour éviter les boucles infinies
+       * sur des espaces de combinaisons trop petits.
+       */
+      function doDraw() {
+        if (!state.collection) return;
+        const seqId = document.getElementById("seqSelect").value;
+        if (state.circularIds.has(seqId)) {
+          showMsg("error", t("msg.draw_circular"));
+          return;
+        }
+        const seq = state.seqMap[seqId];
+        if (!seq) return;
+        const n = Math.max(
+          1,
+          Math.min(
+            100,
+            parseInt(document.getElementById("drawCount").value, 10) || 5,
+          ),
+        );
+        const MAX_TRIES = Math.max(200, n * 100);
+        const btn = document.getElementById("drawBtn");
+        btn.classList.add("spinning");
+        setTimeout(() => btn.classList.remove("spinning"), 400);
+        const rows = [];
+        const seen = new Set();
+        let tries = 0;
+        while (rows.length < n && tries < MAX_TRIES) {
+          tries++;
+          const callStack = new Set([seqId]);
+          const cols = [];
+          for (const item of seq.items || [])
+            cols.push(...resolveItem(item, callStack, 0));
+          const key = JSON.stringify(cols.map((c) => c.value));
+          if (!seen.has(key)) {
+            seen.add(key);
+            rows.push(cols);
+          }
+        }
+        const headerMap = new Map();
+        rows.forEach((row) =>
+          row.forEach((col) => {
+            if (!headerMap.has(col.key)) headerMap.set(col.key, col.isSeq);
+          }),
+        );
+        state.headers = [...headerMap.entries()].map(([key, isSeq]) => ({
+          key,
+          label: key,
+          isSeq,
+        }));
+        state.results = rows;
+        renderResults();
+        if (rows.length < n)
+          showMsg("warn", t("msg.no_unique", { d: rows.length, n }));
+        else hideMsg();
+      }
+
+      // ── Render results ──
+      function renderResults() {
+        const scroll = document.getElementById("tableScroll");
+        if (!state.results.length) {
+          scroll.innerHTML = "";
+          scroll.appendChild(emptyEl);
+          setBadge(0, 0);
+          document.getElementById("copyBtn").disabled = true;
+          document.getElementById("clearBtn").disabled = true;
+          return;
+        }
+        if (emptyEl.parentNode) emptyEl.parentNode.removeChild(emptyEl);
+        const table = document.createElement("table");
+        table.className = "results-table";
+        const thead = document.createElement("thead");
+        const trh = document.createElement("tr");
+        const thNum = document.createElement("th");
+        thNum.textContent = "#";
+        thNum.style.width = "32px";
+        trh.appendChild(thNum);
+        state.headers.forEach((h) => {
+          const th = document.createElement("th");
+          th.textContent = h.label;
+          if (h.isSeq) th.classList.add("seq-col");
+          trh.appendChild(th);
+        });
+        thead.appendChild(trh);
+        table.appendChild(thead);
+        const tbody = document.createElement("tbody");
+        state.results.forEach((row, ri) => {
+          const tr = document.createElement("tr");
+          tr.style.animationDelay = ri * 25 + "ms";
+          const tdN = document.createElement("td");
+          tdN.className = "row-num";
+          tdN.textContent = ri + 1;
+          tr.appendChild(tdN);
+          state.headers.forEach((h) => {
+            const td = document.createElement("td");
+            const col = row.find((c) => c.key === h.key);
+            const val = col ? col.value : "";
+            // Multi-value: each comma-separated value on its own line
+            const parts = val ? val.split(", ") : [""];
+            if (parts.length > 1) {
+              td.innerHTML = parts.map((p) => escHtmlInline(p)).join("<br>");
+            } else {
+              td.textContent = val;
+            }
+            if (h.isSeq) td.classList.add("seq-col");
+            if (
+              val === t("cell.unknown_tbl") ||
+              val === t("cell.unknown_seq") ||
+              val === t("cell.loop")
+            )
+              td.classList.add("error-cell");
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        scroll.innerHTML = "";
+        scroll.appendChild(table);
+        const req =
+          parseInt(document.getElementById("drawCount").value, 10) || 5;
+        setBadge(state.results.length, req);
+        document.getElementById("copyBtn").disabled = false;
+        document.getElementById("clearBtn").disabled = false;
+      }
+      function clearResults() {
+        state.results = [];
+        state.headers = [];
+        const scroll = document.getElementById("tableScroll");
+        const hint = document.getElementById("emptyHint");
+        if (hint) hint.textContent = t("empty.hint");
+        scroll.innerHTML = "";
+        scroll.appendChild(emptyEl);
+        setBadge(0, 0);
+        document.getElementById("copyBtn").disabled = true;
+        document.getElementById("clearBtn").disabled = true;
+      }
+
+      // ── UI helpers (draw) ──
+      function setFileStatus(status) {
+        const el = document.getElementById("fileStatus");
+        el.className = "file-status " + status;
+        const icons = { none: "◈", ok: "✦", warn: "⚠", error: "✗" };
+        const labels = {
+          none: t("status.nofile"),
+          ok: t("status.ok") + " — " + state.fileName,
+          warn: t("status.warn") + " — " + state.fileName,
+          error: t("status.error"),
+        };
+        el.innerHTML = icons[status] + " " + labels[status];
+      }
+      function updateFileStatus() {
+        if (!state.collection && !ed.collection) {
+          setFileStatus("none");
+          return;
+        }
+        if (state.collection)
+          setFileStatus(state.circularIds.size > 0 ? "warn" : "ok");
+      }
+      function setBadge(got, total) {
+        const badge = document.getElementById("badgeCount");
+        if (!total) {
+          badge.textContent = t("badge.empty");
+          badge.className = "badge-count empty";
+          return;
+        }
+        badge.textContent = got + " / " + total;
+        badge.className =
+          "badge-count " +
+          (got === total ? "full" : got > 0 ? "partial" : "empty");
+      }
+      function showMsg(type, text) {
+        const bar = document.getElementById("msgBar");
+        bar.className = "message-bar show " + type;
+        document.getElementById("msgIcon").textContent =
+          type === "error" ? "✗" : type === "warn" ? "⚠" : "✓";
+        document.getElementById("msgText").textContent = text;
+      }
+      function hideMsg() {
+        document.getElementById("msgBar").className = "message-bar";
+      }
+      function copyResults() {
+        if (!state.results.length) return;
+        const rows = state.results.map((row) =>
+          state.headers
+            .map((h) => {
+              const col = row.find((c) => c.key === h.key);
+              return col ? col.value : "";
+            })
+            .join("\t"),
+        );
+        const hdr = state.headers.map((h) => h.label).join("\t");
+        navigator.clipboard.writeText([hdr, ...rows].join("\n")).then(() => {
+          showMsg("info", t("msg.copied"));
+          setTimeout(hideMsg, 2500);
+        });
+      }
+
+      // ══════════════════════════════════════════════════════════════════════
+      //  État du module éditeur (onglet Éditer)
+      //  ed.collection est le modèle de données éditable en mémoire.
+      //  Il est distinct de state (lecture seule) et synchronisé vers lui
+      //  via edSyncToDrawState() après chaque modification.
+      // ══════════════════════════════════════════════════════════════════════
+      const ed = {
+        collection: null, // {titre, description, tables:[], sequences:[]}
+        fileName: "nouveau.gntb",
+        isDirty: false,
+        selected: null, // {type:'table'|'seq', id}
+      };
+
+      /**
+       * Génère un UUID v4 aléatoire.
+       * Utilise crypto.randomUUID() si disponible (Chrome 92+, Firefox 95+),
+       * sinon un fallback Math.random() conforme RFC 4122.
+       * @returns {string} UUID au format xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
+       */
+      function uuidv4() {
+        if (typeof crypto !== "undefined" && crypto.randomUUID)
+          return crypto.randomUUID();
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+          const r = (Math.random() * 16) | 0;
+          return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+        });
+      }
+
+      function edMarkDirty() {
+        ed.isDirty = true;
+        document.getElementById("dirtyMark").style.display = "";
+        document.getElementById("edSaveBtn").disabled = false;
+        document.getElementById("edSaveAsBtn").disabled = false;
+      }
+      function edMarkClean() {
+        ed.isDirty = false;
+        document.getElementById("dirtyMark").style.display = "none";
+      }
+
+      // Sync editor collection -> draw state
+      /**
+       * Synchronise le modèle éditeur (ed.collection) vers le moteur de tirage
+       * (state). Sérialise ed.collection en JSON puis le re-parse via parseGntb()
+       * en mode silencieux, assurant que l'onglet Tirer reflète immédiatement
+       * toutes les modifications de l'éditeur.
+       */
+      function edSyncToDrawState() {
+        if (!ed.collection) return;
+        // Re-parse from serialized form for full normalization
+        const json = JSON.stringify(edSerialize());
+        parseGntb(json, true);
+        state.fileName = ed.fileName;
+        updateFileStatus();
+        if (Object.keys(state.seqMap).length) populateSequences();
+        else {
+          document.getElementById("seqSelect").innerHTML = "";
+          document.getElementById("seqSelect").disabled = true;
+          document.getElementById("drawBtn").disabled = true;
+        }
+      }
+
+      /**
+       * Sérialise ed.collection en objet JSON prêt à l'export .gntb (format v2).
+       * Reconstruit les champs references[].ID avec les préfixes tbl:/seq:
+       * à partir des champs internes targetType et targetId.
+       * @returns {Object|null} Objet JSON sérialisable, ou null si pas de collection
+       */
+      function edSerialize() {
+        if (!ed.collection) return null;
+        const c = ed.collection;
+        return {
+          titre: c.titre || "",
+          description: c.description || "",
+          tables: c.tables.map((tbl) => ({
+            id: tbl.id,
+            nom: tbl.nom,
+            lignes: tbl.lignes.map((l) => ({
+              contenu: l.contenu,
+              poids: l.poids,
+            })),
+          })),
+          sequences: c.sequences.map((seq) => ({
+            id: seq.id,
+            nom: seq.nom,
+            description: seq.description || "",
+            items: seq.items.map((item) => ({
+              titre: item.titre,
+              references: item.references.map((r) => ({
+                ID:
+                  r.targetType === "seq"
+                    ? "seq:" + r.targetId
+                    : "tbl:" + r.targetId,
+                poids: r.poids,
+                min: r.min,
+                max: r.max,
+              })),
+            })),
+          })),
+        };
+      }
+
+      // ── New / Open / Save ──
+      function edNew() {
+        if (ed.isDirty && !confirm(t("msg.unsaved"))) return;
+        ed.collection = {
+          titre: "",
+          description: "",
+          tables: [],
+          sequences: [],
+        };
+        ed.fileName = "nouveau.gntb";
+        ed.selected = null;
+        edMarkDirty();
+        edRenderAll();
+        edSyncToDrawState();
+        switchTab("edit");
+      }
+
+      function edOpen(evt) {
+        const file = evt.target.files[0];
+        if (!file) return;
+        if (ed.isDirty && !confirm(t("msg.unsaved"))) {
+          evt.target.value = "";
+          return;
+        }
+        ed.fileName = file.name;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const raw = JSON.parse(e.target.result);
+          const col = raw.Collection || raw;
+          ed.collection = edImportCollection(col);
+          ed.selected = null;
+          edMarkClean();
+          edRenderAll();
+          // Also sync to draw tab
+          state.fileName = file.name;
+          parseGntb(e.target.result);
+          edSyncToDrawState();
+        };
+        reader.readAsText(file, "UTF-8");
+        evt.target.value = "";
+      }
+
+      // When draw tab loads a file, make it available in editor too
+      function edImportFromDraw(text, filename) {
+        const raw = JSON.parse(text);
+        const col = raw.Collection || raw;
+        ed.collection = edImportCollection(col);
+        ed.fileName = filename || "fichier.gntb";
+        ed.selected = null;
+        edMarkClean();
+        edRenderAll();
+        document.getElementById("edSaveBtn").disabled = false;
+        document.getElementById("edSaveAsBtn").disabled = false;
+      }
+
+      /**
+       * Convertit un objet collection brut (v1 ou v2) en modèle interne éditeur.
+       * Normalise les noms de champs (ID/id, nom/name), génère les UUIDs manquants,
+       * et décompose les references[].ID préfixés en {targetType, targetId}.
+       * Gère aussi le format simplifié item.id (sans tableau references).
+       * @param {Object} col - Collection brute issue de JSON.parse()
+       * @returns {Object}   - Collection normalisée pour l'éditeur
+       */
+      function edImportCollection(col) {
+        return {
+          titre: col.titre || col.title || "",
+          description: col.description || "",
+          tables: (col.tables || []).map((tbl) => ({
+            id: stripPrefix(tbl.ID || tbl.id || uuidv4()),
+            nom: tbl.nom || tbl.name || "",
+            lignes: (tbl.lignes || []).map((l) => ({
+              contenu: (l.contenu || "").trim(),
+              poids: Math.max(1, parseInt(l.poids, 10) || 1),
+            })),
+          })),
+          sequences: (col.sequences || []).map((seq, idx) => ({
+            id: stripPrefix(seq.id || seq.ID || "seq_" + idx),
+            nom: seq.nom || "",
+            description: seq.description || "",
+            items: (seq.items || []).map((item) => {
+              let refs = item.references || [];
+              if (!refs.length && (item.id || item.ID)) {
+                const d = item.id || item.ID || "";
+                refs = [{ ID: d, poids: 10, min: 1, max: 1 }];
+              }
+              return {
+                titre: item.titre || "",
+                references: refs.map((r) => {
+                  const rawId = r.ID || r.id || "";
+                  const isSeq = rawId.startsWith("seq:");
+                  return {
+                    targetType: isSeq ? "seq" : "tbl",
+                    targetId: stripPrefix(rawId),
+                    poids: Math.max(1, parseInt(r.poids, 10) || 10),
+                    min: Math.max(1, parseInt(r.min, 10) || 1),
+                    max: Math.max(1, parseInt(r.max, 10) || 1),
+                  };
+                }),
+              };
+            }),
+          })),
+        };
+      }
+
+      function edSave() {
+        if (!ed.collection) return;
+        const errors = edValidate();
+        if (errors.length) return;
+        const json = JSON.stringify(edSerialize(), null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = ed.fileName;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        edMarkClean();
+        showMsg("info", t("msg.saved", { f: ed.fileName }));
+        setTimeout(hideMsg, 2500);
+      }
+      function edSaveAs() {
+        if (!ed.collection) return;
+        const name = prompt(t("prompt.filename"), ed.fileName);
+        if (!name) return;
+        ed.fileName = name.endsWith(".gntb") ? name : name + ".gntb";
+        edSave();
+      }
+
+      // ── Validation ──
+      /**
+       * Valide l'intégralité de ed.collection et affiche les erreurs dans la
+       * bannière de validation. Retourne le tableau des erreurs (vide = valide).
+       * Le bouton Enregistrer est désactivé si au moins une erreur est présente.
+       * Appelée à chaque modification du modèle.
+       * @returns {string[]} Tableau des messages d'erreur
+       */
+      function edValidate() {
+        if (!ed.collection) return [];
+        const errs = [];
+        const c = ed.collection;
+        if (!c.titre.trim()) errs.push(t("val.titleRequired"));
+        c.tables.forEach((tbl) => {
+          if (!tbl.nom.trim()) errs.push(t("val.tableNameRequired"));
+          if (!tbl.lignes.length)
+            errs.push(t("val.tableNoLines") + " (" + tbl.nom + ")");
+          tbl.lignes.forEach((l) => {
+            if (!l.contenu.trim())
+              errs.push(t("val.lineEmptyContent") + " (" + tbl.nom + ")");
+          });
+        });
+        c.sequences.forEach((seq) => {
+          if (!seq.nom.trim()) errs.push(t("val.seqNameRequired"));
+          if (!seq.items.length)
+            errs.push(t("val.seqNoItems") + " (" + seq.nom + ")");
+          seq.items.forEach((item) => {
+            if (!item.titre.trim())
+              errs.push(t("val.itemNoTitle") + " (" + seq.nom + ")");
+            if (!item.references.length)
+              errs.push(
+                t("val.itemNoRef") + " (" + seq.nom + "/" + item.titre + ")",
+              );
+            item.references.forEach((r) => {
+              if (!r.targetId)
+                errs.push(
+                  t("val.refNoTarget") +
+                    " (" +
+                    seq.nom +
+                    "/" +
+                    item.titre +
+                    ")",
+                );
+              if (r.max < r.min)
+                errs.push(
+                  t("val.refMaxMinError") +
+                    " (" +
+                    seq.nom +
+                    "/" +
+                    item.titre +
+                    ")",
+                );
+            });
+          });
+        });
+        // Check circular
+        edDetectCircular().forEach((id) => {
+          const seq = c.sequences.find((s) => s.id === id);
+          if (seq) errs.push(t("val.circular") + " " + seq.nom);
+        });
+        const banner = document.getElementById("validationBanner");
+        if (errs.length) {
+          banner.innerHTML =
+            "<strong>⚠</strong><ul>" +
+            errs.map((e) => `<li>${e}</li>`).join("") +
+            "</ul>";
+          banner.classList.add("show");
+        } else {
+          banner.classList.remove("show");
+        }
+        return errs;
+      }
+      /**
+       * Version éditeur de la détection de cycles (même algorithme DFS que
+       * detectCircular() côté tirage, mais opère sur ed.collection au lieu de
+       * state). Utilisée par edValidate() et edRenderGraph().
+       * @returns {Set<string>} Ensemble des IDs de séquences impliquées dans un cycle
+       */
+      function edDetectCircular() {
+        const circular = new Set();
+        if (!ed.collection) return circular;
+        const seqs = ed.collection.sequences;
+        const seqIds = new Set(seqs.map((s) => s.id));
+        const WHITE = 0,
+          GREY = 1,
+          BLACK = 2;
+        const color = {};
+        seqs.forEach((s) => (color[s.id] = WHITE));
+        function dfs(id) {
+          if (!color.hasOwnProperty(id)) return false;
+          if (color[id] === GREY) {
+            circular.add(id);
+            return true;
+          }
+          if (color[id] === BLACK) return false;
+          color[id] = GREY;
+          const seq = seqs.find((s) => s.id === id);
+          if (seq)
+            seq.items.forEach((item) =>
+              item.references.forEach((r) => {
+                if (r.targetType === "seq" && r.targetId) {
+                  if (dfs(r.targetId)) circular.add(id);
+                }
+              }),
+            );
+          color[id] = BLACK;
+          return false;
+        }
+        seqs.forEach((s) => {
+          if (color[s.id] === WHITE) dfs(s.id);
+        });
+        return circular;
+      }
+
+      // ── Render all editor UI ──
+      function edRenderAll() {
+        edRenderSidebar();
+        edRenderForm();
+        edRenderGraph();
+        edValidate();
+      }
+
+      function edRenderSidebar() {
+        if (!ed.collection) {
+          document.getElementById("tableList").innerHTML = "";
+          document.getElementById("seqList").innerHTML = "";
+          document.getElementById("edCollTitle").value = "";
+          document.getElementById("edCollDesc").value = "";
+          return;
+        }
+        document.getElementById("edCollTitle").value =
+          ed.collection.titre || "";
+        document.getElementById("edCollDesc").value =
+          ed.collection.description || "";
+        const circular = edDetectCircular();
+
+        // Tables
+        const tl = document.getElementById("tableList");
+        tl.innerHTML = "";
+        ed.collection.tables.forEach((tbl) => {
+          const li = document.createElement("li");
+          li.className = "tree-item";
+          li.dataset.type = "table";
+          li.dataset.id = tbl.id;
+          if (
+            ed.selected &&
+            ed.selected.type === "table" &&
+            ed.selected.id === tbl.id
+          )
+            li.classList.add("selected");
+          li.innerHTML = `<span class="item-name">${escHtml(tbl.nom || "—")}</span>
+      <span class="item-count">${tbl.lignes.length}</span>
+      <button class="item-menu" title="…" aria-label="Options pour ${escHtml(tbl.nom || "cette table")}">⋯</button>`;
+          li.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("item-menu")) {
+              edSelectItem("table", tbl.id);
+            }
+          });
+          li.querySelector(".item-menu").addEventListener("click", (e) => {
+            e.stopPropagation();
+            showCtx(e, "table", tbl.id);
+          });
+          setupDrag(li, "table");
+          tl.appendChild(li);
+        });
+
+        // Sequences
+        const sl = document.getElementById("seqList");
+        sl.innerHTML = "";
+        ed.collection.sequences.forEach((seq) => {
+          const li = document.createElement("li");
+          li.className = "tree-item";
+          if (circular.has(seq.id)) li.classList.add("circular");
+          li.dataset.type = "seq";
+          li.dataset.id = seq.id;
+          if (
+            ed.selected &&
+            ed.selected.type === "seq" &&
+            ed.selected.id === seq.id
+          )
+            li.classList.add("selected");
+          li.innerHTML = `<span class="item-name">${escHtml(seq.nom || "—")}${circular.has(seq.id) ? " ⚠" : ""}</span>
+      <span class="item-count">${seq.items.length}</span>
+      <button class="item-menu" title="…" aria-label="Options pour ${escHtml(seq.nom || "cette séquence")}">⋯</button>`;
+          li.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("item-menu")) {
+              edSelectItem("seq", seq.id);
+            }
+          });
+          li.querySelector(".item-menu").addEventListener("click", (e) => {
+            e.stopPropagation();
+            showCtx(e, "seq", seq.id);
+          });
+          setupDrag(li, "seq");
+          sl.appendChild(li);
+        });
+      }
+
+      function edSelectItem(type, id) {
+        ed.selected = { type, id };
+        edRenderSidebar();
+        edRenderForm();
+      }
+
+      // ── Table form ──
+      function edRenderForm() {
+        document.getElementById("edFormEmpty").style.display = "none";
+        document.getElementById("edFormTable").style.display = "none";
+        document.getElementById("edFormSeq").style.display = "none";
+        if (!ed.selected || !ed.collection) {
+          document.getElementById("edFormEmpty").style.display = "";
+          return;
+        }
+        if (ed.selected.type === "table") renderTableForm();
+        else renderSeqForm();
+      }
+
+      function renderTableForm() {
+        const tbl = ed.collection.tables.find((t) => t.id === ed.selected.id);
+        if (!tbl) {
+          document.getElementById("edFormEmpty").style.display = "";
+          return;
+        }
+        const wrap = document.getElementById("edFormTable");
+        wrap.style.display = "";
+        const totalPoids = tbl.lignes.reduce((s, l) => s + l.poids, 0);
+        wrap.innerHTML = `
+    <div class="panel-title">${t("edit.tableTitle")}</div>
+    <div class="field-row">
+      <div class="field-group" style="flex:2">
+        <label>${t("label.tableName")}</label>
+        <input type="text" id="tblNameInput" value="${escHtml(tbl.nom)}" oninput="edUpdateTableName('${tbl.id}',this.value)">
+      </div>
+      <div class="field-group" style="flex:1">
+        <label>${t("label.tableId")}</label>
+        <input type="text" value="${tbl.id}" readonly style="color:var(--grey-text);font-size:0.75rem;">
+      </div>
+    </div>
+    <div class="lines-header">
+      <div class="panel-title" style="margin-bottom:0;flex:1">${tbl.lignes.length} ${tbl.lignes.length === 1 ? t("label.line") : t("label.lines")}</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-action" onclick="edImportLines('${tbl.id}')">${t("btn.importLines")}</button>
+        <button class="btn-action" onclick="edAddLine('${tbl.id}')">${t("btn.addLine")}</button>
+      </div>
+    </div>
+    <div class="table-scroll">
+    <table class="lines-table" id="linesTable">
+      <thead><tr>
+        <th style="width:24px"></th>
+        <th>${t("label.lineContent")}</th>
+        <th style="width:70px">${t("label.lineWeight")}</th>
+        <th style="width:50px">${t("label.linePct")}</th>
+        <th style="width:32px"></th>
+      </tr></thead>
+      <tbody id="linesTbody"></tbody>
+    </table>
+    </div>`;
+        renderLinesBody(tbl, totalPoids);
+      }
+
+      function renderLinesBody(tbl, totalPoids) {
+        const tbody = document.getElementById("linesTbody");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        tbl.lignes.forEach((l, i) => {
+          const pct =
+            totalPoids > 0 ? Math.round((l.poids / totalPoids) * 100) : 0;
+          const tr = document.createElement("tr");
+          tr.dataset.idx = i;
+          tr.draggable = true;
+          tr.innerHTML = `<td><span class="drag-handle">⠿</span></td>
+      <td><input type="text" value="${escHtml(l.contenu)}" oninput="edUpdateLine('${tbl.id}',${i},'contenu',this.value)" placeholder="${t("placeholder.lineContent")}"></td>
+      <td><input type="number" value="${l.poids}" min="1" oninput="edUpdateLine('${tbl.id}',${i},'poids',this.value)" onblur="edFixPoids('${tbl.id}',${i},this)"></td>
+      <td class="pct-cell">${pct}%</td>
+      <td><button class="btn-icon" onclick="edDeleteLine('${tbl.id}',${i})" aria-label="Supprimer cette ligne">🗑</button></td>`;
+          setupLineDrag(tr, tbl.id);
+          tbody.appendChild(tr);
+        });
+      }
+
+      function edUpdateTableName(id, val) {
+        const tbl = ed.collection.tables.find((t) => t.id === id);
+        if (!tbl) return;
+        tbl.nom = val;
+        edMarkDirty();
+        edRenderSidebar();
+        edRenderGraph();
+        edValidate();
+      }
+      function edUpdateMeta() {
+        if (!ed.collection) return;
+        ed.collection.titre = document.getElementById("edCollTitle").value;
+        ed.collection.description = document.getElementById("edCollDesc").value;
+        edMarkDirty();
+        edValidate();
+      }
+      function edUpdateLine(tblId, idx, field, val) {
+        const tbl = ed.collection.tables.find((t) => t.id === tblId);
+        if (!tbl) return;
+        if (field === "poids")
+          tbl.lignes[idx].poids = Math.max(1, parseInt(val, 10) || 1);
+        else tbl.lignes[idx].contenu = val;
+        edMarkDirty();
+        edSyncToDrawState();
+        // refresh pct only
+        const totalPoids = tbl.lignes.reduce((s, l) => s + l.poids, 0);
+        const tbody = document.getElementById("linesTbody");
+        if (!tbody) return;
+        tbody.querySelectorAll("tr").forEach((tr, i) => {
+          const pct =
+            totalPoids > 0
+              ? Math.round((tbl.lignes[i].poids / totalPoids) * 100)
+              : 0;
+          const pctCell = tr.querySelector(".pct-cell");
+          if (pctCell) pctCell.textContent = pct + "%";
+        });
+        edValidate();
+      }
+      function edFixPoids(tblId, idx, input) {
+        const tbl = ed.collection.tables.find((t) => t.id === tblId);
+        if (!tbl) return;
+        const v = Math.max(1, parseInt(input.value, 10) || 1);
+        tbl.lignes[idx].poids = v;
+        input.value = v;
+        edMarkDirty();
+      }
+      function edAddLine(tblId) {
+        const tbl = ed.collection.tables.find((t) => t.id === tblId);
+        if (!tbl) return;
+        tbl.lignes.push({ contenu: "", poids: 10 });
+        edMarkDirty();
+        renderTableForm();
+        edValidate();
+        // Focus last content input
+        const inputs = document
+          .getElementById("linesTbody")
+          .querySelectorAll('input[type="text"]');
+        if (inputs.length) inputs[inputs.length - 1].focus();
+      }
+      function edDeleteLine(tblId, idx) {
+        const tbl = ed.collection.tables.find((t) => t.id === tblId);
+        if (!tbl) return;
+        tbl.lignes.splice(idx, 1);
+        edMarkDirty();
+        renderTableForm();
+        edSyncToDrawState();
+        edValidate();
+      }
+
+      // ── Sequence form ──
+      function renderSeqForm() {
+        const seq = ed.collection.sequences.find(
+          (s) => s.id === ed.selected.id,
+        );
+        if (!seq) {
+          document.getElementById("edFormEmpty").style.display = "";
+          return;
+        }
+        const wrap = document.getElementById("edFormSeq");
+        wrap.style.display = "";
+        wrap.innerHTML = `
+    <div class="panel-title">${t("edit.seqTitle")}</div>
+    <div class="field-row">
+      <div class="field-group" style="flex:2">
+        <label>${t("label.seqName")}</label>
+        <input type="text" value="${escHtml(seq.nom)}" oninput="edUpdateSeqName('${seq.id}',this.value)">
+      </div>
+      <div class="field-group" style="flex:1">
+        <label>${t("label.tableId")}</label>
+        <input type="text" value="${seq.id}" readonly style="color:var(--grey-text);font-size:0.75rem;">
+      </div>
+    </div>
+    <div class="field-group">
+      <label>${t("label.seqDesc")}</label>
+      <textarea rows="2" oninput="edUpdateSeqDesc('${seq.id}',this.value)">${escHtml(seq.description || "")}</textarea>
+    </div>
+    <div class="lines-header">
+      <div class="panel-title" style="margin-bottom:0;flex:1">${t("label.items")}</div>
+      <button class="btn-action" onclick="edAddItem('${seq.id}')">${t("btn.addItem")}</button>
+    </div>
+    <div class="items-list" id="itemsList"></div>`;
+        renderItemsList(seq);
+      }
+
+      function renderItemsList(seq) {
+        const wrap = document.getElementById("itemsList");
+        if (!wrap) return;
+        wrap.innerHTML = "";
+        seq.items.forEach((item, ii) => {
+          const card = document.createElement("div");
+          card.className = "item-card";
+          card.dataset.idx = ii;
+          card.draggable = true;
+          card.innerHTML = `
+      <div class="item-card-header">
+        <span class="drag-handle" style="cursor:grab;color:var(--grey-text)">⠿</span>
+        <input class="item-title-input" type="text" value="${escHtml(item.titre)}"
+          oninput="edUpdateItemTitle('${seq.id}',${ii},this.value)" placeholder="${t("label.itemTitle")}">
+        <button class="btn-icon" onclick="edDeleteItem('${seq.id}',${ii})" title="${t("btn.delete")}" aria-label="${t("btn.delete")}">🗑</button>
+      </div>
+      <div class="item-card-body" id="itemBody_${ii}"></div>`;
+          setupItemDrag(card, seq.id);
+          wrap.appendChild(card);
+          renderRefList(seq, item, ii);
+        });
+      }
+
+      function renderRefList(seq, item, ii) {
+        const body = document.getElementById("itemBody_" + ii);
+        if (!body) return;
+        body.innerHTML = "";
+        item.references.forEach((r, ri) => {
+          const row = document.createElement("div");
+          row.className = "ref-row";
+          const tables = ed.collection.tables;
+          const seqs = ed.collection.sequences.filter((s) => s.id !== seq.id);
+          const tblOptions = tables
+            .map(
+              (tbl) =>
+                `<option value="${tbl.id}" ${r.targetType === "tbl" && r.targetId === tbl.id ? "selected" : ""}>${escHtml(tbl.nom || tbl.id)}</option>`,
+            )
+            .join("");
+          const seqOptions = seqs
+            .map(
+              (s) =>
+                `<option value="${s.id}" ${r.targetType === "seq" && r.targetId === s.id ? "selected" : ""}>${escHtml(s.nom || s.id)}</option>`,
+            )
+            .join("");
+          const isSeqType = r.targetType === "seq";
+          row.innerHTML = `
+      <span class="ref-label">${t("label.refType")}</span>
+      <select onchange="edUpdateRefType('${seq.id}',${ii},${ri},this.value)">
+        <option value="tbl" ${!isSeqType ? "selected" : ""}>${t("label.refTypeTable")}</option>
+        <option value="seq" ${isSeqType ? "selected" : ""}>${t("label.refTypeSeq")}</option>
+      </select>
+      <span class="ref-label">${t("label.refTarget")}</span>
+      <select class="ref-target-select" onchange="edUpdateRefTarget('${seq.id}',${ii},${ri},this.value)">
+        ${isSeqType ? seqOptions : tblOptions}
+      </select>
+      <span class="ref-label">${t("label.refWeight")}</span>
+      <input type="number" value="${r.poids}" min="1" style="width:55px"
+        oninput="edUpdateRefField('${seq.id}',${ii},${ri},'poids',this.value)">
+      <span class="min-max-group">
+        <span class="ref-label">${t("label.refMin")}</span>
+        <input type="number" value="${r.min}" min="1" style="width:50px"
+          oninput="edUpdateRefField('${seq.id}',${ii},${ri},'min',this.value)">
+        <span class="ref-label">${t("label.refMax")}</span>
+        <input type="number" value="${r.max}" min="1" style="width:50px"
+          oninput="edUpdateRefField('${seq.id}',${ii},${ri},'max',this.value)">
+      </span>
+      <button class="btn-icon" onclick="edDeleteRef('${seq.id}',${ii},${ri})" title="${t("btn.delete")}" aria-label="${t("btn.delete")}">🗑</button>`;
+          body.appendChild(row);
+        });
+        // Add ref button
+        const addBtn = document.createElement("button");
+        addBtn.className = "btn-action";
+        addBtn.style.marginTop = "6px";
+        addBtn.style.fontSize = "0.75rem";
+        addBtn.textContent = t("btn.addRef");
+        addBtn.onclick = () => edAddRef(seq.id, ii);
+        body.appendChild(addBtn);
+      }
+
+      function edUpdateSeqName(id, val) {
+        const seq = ed.collection.sequences.find((s) => s.id === id);
+        if (!seq) return;
+        seq.nom = val;
+        edMarkDirty();
+        edRenderSidebar();
+        edRenderGraph();
+        edSyncToDrawState();
+        edValidate();
+      }
+      function edUpdateSeqDesc(id, val) {
+        const seq = ed.collection.sequences.find((s) => s.id === id);
+        if (!seq) return;
+        seq.description = val;
+        edMarkDirty();
+        edSyncToDrawState();
+      }
+      function edUpdateItemTitle(seqId, ii, val) {
+        const seq = ed.collection.sequences.find((s) => s.id === seqId);
+        if (!seq) return;
+        seq.items[ii].titre = val;
+        edMarkDirty();
+        edSyncToDrawState();
+        edValidate();
+      }
+      function edDeleteItem(seqId, ii) {
+        const seq = ed.collection.sequences.find((s) => s.id === seqId);
+        if (!seq) return;
+        seq.items.splice(ii, 1);
+        edMarkDirty();
+        renderSeqForm();
+        edSyncToDrawState();
+        edValidate();
+      }
+      function edAddItem(seqId) {
+        const seq = ed.collection.sequences.find((s) => s.id === seqId);
+        if (!seq) return;
+        seq.items.push({ titre: "", references: [] });
+        edMarkDirty();
+        renderSeqForm();
+        edSyncToDrawState();
+        edValidate();
+      }
+      function edUpdateRefType(seqId, ii, ri, val) {
+        const seq = ed.collection.sequences.find((s) => s.id === seqId);
+        if (!seq) return;
+        const ref = seq.items[ii].references[ri];
+        ref.targetType = val;
+        ref.targetId = "";
+        edMarkDirty();
+        renderSeqForm();
+        edSyncToDrawState();
+        edValidate();
+      }
+      function edUpdateRefTarget(seqId, ii, ri, val) {
+        const seq = ed.collection.sequences.find((s) => s.id === seqId);
+        if (!seq) return;
+        seq.items[ii].references[ri].targetId = val;
+        edMarkDirty();
+        edSyncToDrawState();
+        edValidate();
+      }
+      function edUpdateRefField(seqId, ii, ri, field, val) {
+        const seq = ed.collection.sequences.find((s) => s.id === seqId);
+        if (!seq) return;
+        const ref = seq.items[ii].references[ri];
+        ref[field] = Math.max(1, parseInt(val, 10) || 1);
+        edMarkDirty();
+        edSyncToDrawState();
+        edValidate();
+      }
+      function edDeleteRef(seqId, ii, ri) {
+        const seq = ed.collection.sequences.find((s) => s.id === seqId);
+        if (!seq) return;
+        seq.items[ii].references.splice(ri, 1);
+        edMarkDirty();
+        renderSeqForm();
+        edSyncToDrawState();
+        edValidate();
+      }
+      function edAddRef(seqId, ii) {
+        const seq = ed.collection.sequences.find((s) => s.id === seqId);
+        if (!seq) return;
+        const firstTbl = ed.collection.tables[0];
+        seq.items[ii].references.push({
+          targetType: "tbl",
+          targetId: firstTbl ? firstTbl.id : "",
+          poids: 10,
+          min: 1,
+          max: 1,
+        });
+        edMarkDirty();
+        renderSeqForm();
+        edSyncToDrawState();
+        edValidate();
+      }
+
+      // ── Add / duplicate / delete table / seq ──
+      function edAddTable() {
+        if (!ed.collection) edNew();
+        const tbl = { id: uuidv4(), nom: "", lignes: [] };
+        ed.collection.tables.push(tbl);
+        edMarkDirty();
+        ed.selected = { type: "table", id: tbl.id };
+        edRenderAll();
+        edSyncToDrawState();
+        setTimeout(() => {
+          const i = document.getElementById("tblNameInput");
+          if (i) i.focus();
+        }, 50);
+      }
+      function edAddSequence() {
+        if (!ed.collection) edNew();
+        const seq = { id: uuidv4(), nom: "", description: "", items: [] };
+        ed.collection.sequences.push(seq);
+        edMarkDirty();
+        ed.selected = { type: "seq", id: seq.id };
+        edRenderAll();
+        edSyncToDrawState();
+      }
+
+      function edDuplicateItem(type, id) {
+        if (type === "table") {
+          const tbl = ed.collection.tables.find((t) => t.id === id);
+          if (!tbl) return;
+          const copy = JSON.parse(JSON.stringify(tbl));
+          copy.id = uuidv4();
+          copy.nom = t("label.copyOf") + copy.nom;
+          const idx = ed.collection.tables.indexOf(tbl);
+          ed.collection.tables.splice(idx + 1, 0, copy);
+          ed.selected = { type: "table", id: copy.id };
+        } else {
+          const seq = ed.collection.sequences.find((s) => s.id === id);
+          if (!seq) return;
+          const copy = JSON.parse(JSON.stringify(seq));
+          copy.id = uuidv4();
+          copy.nom = t("label.copyOf") + copy.nom;
+          const idx = ed.collection.sequences.indexOf(seq);
+          ed.collection.sequences.splice(idx + 1, 0, copy);
+          ed.selected = { type: "seq", id: copy.id };
+        }
+        edMarkDirty();
+        edRenderAll();
+        edSyncToDrawState();
+      }
+
+      function edDeleteItemConfirm(type, id) {
+        const label =
+          type === "table"
+            ? (ed.collection.tables.find((t) => t.id === id) || {}).nom || "?"
+            : (ed.collection.sequences.find((s) => s.id === id) || {}).nom ||
+              "?";
+        const msgKey = type === "table" ? "msg.deleteTable" : "msg.deleteSeq";
+        let body = t(msgKey, { n: label });
+        // Check for references
+        if (type === "table") {
+          const refCount = ed.collection.sequences.reduce(
+            (n, seq) =>
+              n +
+              seq.items.reduce(
+                (m, item) =>
+                  m +
+                  item.references.filter(
+                    (r) => r.targetType === "tbl" && r.targetId === id,
+                  ).length,
+                0,
+              ),
+            0,
+          );
+          if (refCount) body += " " + t("msg.deleteOrphans");
+        } else {
+          const refCount = ed.collection.sequences.reduce(
+            (n, seq) =>
+              n +
+              seq.items.reduce(
+                (m, item) =>
+                  m +
+                  item.references.filter(
+                    (r) => r.targetType === "seq" && r.targetId === id,
+                  ).length,
+                0,
+              ),
+            0,
+          );
+          if (refCount) body += " " + t("msg.deleteOrphans");
+        }
+        showModal(
+          label,
+          body,
+          () => {
+            if (type === "table") {
+              ed.collection.tables = ed.collection.tables.filter(
+                (t) => t.id !== id,
+              );
+              // Remove orphan refs
+              ed.collection.sequences.forEach((seq) =>
+                seq.items.forEach((item) => {
+                  item.references = item.references.filter(
+                    (r) => !(r.targetType === "tbl" && r.targetId === id),
+                  );
+                }),
+              );
+            } else {
+              ed.collection.sequences = ed.collection.sequences.filter(
+                (s) => s.id !== id,
+              );
+              ed.collection.sequences.forEach((seq) =>
+                seq.items.forEach((item) => {
+                  item.references = item.references.filter(
+                    (r) => !(r.targetType === "seq" && r.targetId === id),
+                  );
+                }),
+              );
+            }
+            if (ed.selected && ed.selected.id === id) ed.selected = null;
+            edMarkDirty();
+            edRenderAll();
+            edSyncToDrawState();
+          },
+          true,
+        );
+      }
+
+      // ── Import lines ──
+      function edImportLines(tblId) {
+        showModal(
+          t("msg.importTitle"),
+          t("msg.importHint"),
+          () => {
+            const tbl = ed.collection.tables.find((t) => t.id === tblId);
+            if (!tbl) return;
+            const text = document.getElementById("modalTextarea").value;
+            let added = 0;
+            text.split("\n").forEach((line) => {
+              line = line.trim();
+              if (!line) return;
+              const parts = line.split(";");
+              const contenu = parts[0].trim();
+              if (!contenu) return;
+              const poids = parts[1]
+                ? Math.max(1, parseInt(parts[1].trim(), 10) || 10)
+                : 10;
+              tbl.lignes.push({ contenu, poids });
+              added++;
+            });
+            edMarkDirty();
+            renderTableForm();
+            edSyncToDrawState();
+            edValidate();
+          },
+          false,
+          true,
+        );
+      }
+
+      // ── Graph ──
+      function toggleGraph() {
+        const toggle = document.getElementById("graphToggle");
+        const body = document.getElementById("graphBody");
+        toggle.classList.toggle("open");
+        body.classList.toggle("open");
+        const isOpen = body.classList.contains("open");
+        toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        if (isOpen) edRenderGraph();
+      }
+      /**
+       * Génère et affiche le graphe SVG des dépendances entre séquences (seq:→seq:).
+       * Layout : tri topologique pour répartir les nœuds en colonnes (couches),
+       * centrage vertical par couche. Arêtes tracées en courbes de Bézier.
+       * Nœuds colorés selon leur état : valide (bleu), circulaire (orange),
+       * sélectionné (bordure épaisse). Flèches rouges pour les cycles.
+       * Clic sur un nœud → edSelectItem().
+       */
+      function edRenderGraph() {
+        const wrap = document.getElementById("graphWrap");
+        if (!document.getElementById("graphBody").classList.contains("open"))
+          return;
+        if (!ed.collection) {
+          wrap.innerHTML = `<div class="graph-empty">${t("graph.empty")}</div>`;
+          return;
+        }
+        const seqs = ed.collection.sequences;
+        // Build edges: seq -> seq via references
+        const edges = [];
+        seqs.forEach((seq) => {
+          seq.items.forEach((item) => {
+            item.references.forEach((r) => {
+              if (r.targetType === "seq" && r.targetId)
+                edges.push({ from: seq.id, to: r.targetId });
+            });
+          });
+        });
+        if (!edges.length) {
+          wrap.innerHTML = `<div class="graph-empty">${t("graph.empty")}</div>`;
+          return;
+        }
+        const circular = edDetectCircular();
+        // Layout: topological columns
+        const inDegree = {};
+        seqs.forEach((s) => (inDegree[s.id] = 0));
+        edges.forEach((e) => {
+          if (inDegree.hasOwnProperty(e.to)) inDegree[e.to]++;
+        });
+        const layers = {};
+        const queue = seqs.filter((s) => inDegree[s.id] === 0).map((s) => s.id);
+        seqs.forEach((s) => (layers[s.id] = 0));
+        const visited = new Set();
+        let head = 0;
+        while (head < queue.length) {
+          const id = queue[head++];
+          visited.add(id);
+          edges
+            .filter((e) => e.from === id)
+            .forEach((e) => {
+              if (!visited.has(e.to)) {
+                layers[e.to] = Math.max(layers[e.to], (layers[id] || 0) + 1);
+                queue.push(e.to);
+              }
+            });
+        }
+        // Nodes in edges only
+        const nodeIds = new Set(edges.flatMap((e) => [e.from, e.to]));
+        const nodeSeqs = seqs.filter((s) => nodeIds.has(s.id));
+        const maxLayer = Math.max(...nodeSeqs.map((s) => layers[s.id] || 0));
+        const layerGroups = {};
+        for (let l = 0; l <= maxLayer; l++) layerGroups[l] = [];
+        nodeSeqs.forEach((s) => layerGroups[layers[s.id] || 0].push(s.id));
+        const NODE_W = 140,
+          NODE_H = 36,
+          GAP_X = 60,
+          GAP_Y = 16;
+        const maxPerLayer = Math.max(
+          ...Object.values(layerGroups).map((g) => g.length),
+        );
+        const svgH = maxPerLayer * (NODE_H + GAP_Y) + 40;
+        const svgW = (maxLayer + 1) * (NODE_W + GAP_X) + 40;
+        const pos = {};
+        Object.entries(layerGroups).forEach(([layer, ids]) => {
+          const totalH = ids.length * (NODE_H + GAP_Y) - GAP_Y;
+          const startY = (svgH - totalH) / 2;
+          ids.forEach((id, i) => {
+            pos[id] = {
+              x: 20 + parseInt(layer) * (NODE_W + GAP_X),
+              y: startY + i * (NODE_H + GAP_Y),
+            };
+          });
+        });
+        // Build SVG
+        let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" style="display:block">
+  <defs>
+    <marker id="arrowN" markerWidth="8" markerHeight="8" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#2E6DA4"/></marker>
+    <marker id="arrowR" markerWidth="8" markerHeight="8" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#C00000"/></marker>
+  </defs>`;
+        // Edges
+        edges.forEach((e) => {
+          const fp = pos[e.from];
+          const tp = pos[e.to];
+          if (!fp || !tp) return;
+          const isCirc = circular.has(e.from) || circular.has(e.to);
+          const x1 = fp.x + NODE_W,
+            y1 = fp.y + NODE_H / 2;
+          const x2 = tp.x,
+            y2 = tp.y + NODE_H / 2;
+          const cx1 = x1 + 30,
+            cx2 = x2 - 30;
+          svg += `<path d="M${x1},${y1} C${cx1},${y1} ${cx2},${y2} ${x2},${y2}"
+      fill="none" stroke="${isCirc ? "#C00000" : "#2E6DA4"}" stroke-width="1.5"
+      marker-end="url(#${isCirc ? "arrowR" : "arrowN"})"/>`;
+        });
+        // Nodes
+        nodeSeqs.forEach((s) => {
+          const p = pos[s.id];
+          if (!p) return;
+          const isCirc = circular.has(s.id);
+          const fill = isCirc ? "rgba(224,123,0,0.1)" : "#EBF4FB";
+          const stroke = isCirc ? "#E07B00" : "#2E6DA4";
+          const textColor = isCirc ? "#E07B00" : "#1E3A5F";
+          const isSelected =
+            ed.selected &&
+            ed.selected.type === "seq" &&
+            ed.selected.id === s.id;
+          const shadow = isSelected ? `filter="url(#sel)"` : "";
+          svg += `<g class="graph-node" data-id="${s.id}" onclick="edSelectItem('seq','${s.id}')" style="cursor:pointer">
+      <rect x="${p.x}" y="${p.y}" width="${NODE_W}" height="${NODE_H}" rx="6"
+        fill="${fill}" stroke="${stroke}" stroke-width="${isSelected ? 2.5 : 1.5}"
+        ${isSelected ? 'filter="url(#shadow)"' : ""}/>
+      <text x="${p.x + NODE_W / 2}" y="${p.y + NODE_H / 2 + 5}" text-anchor="middle"
+        font-family="Outfit,sans-serif" font-size="12" fill="${textColor}" font-weight="600">
+        ${escHtml((s.nom || s.id).slice(0, 18) + (s.nom.length > 18 ? "…" : ""))}
+      </text>
+    </g>`;
+        });
+        svg += "</svg>";
+        wrap.innerHTML = svg;
+      }
+
+      // ── Drag & drop (tree lists) ──
+      /**
+       * Active le drag & drop HTML5 natif sur un élément de liste (table ou séquence).
+       * Au drop, déplace l'élément dans le tableau correspondant de ed.collection
+       * et re-rend la barre latérale.
+       * @param {HTMLElement} li   - Élément <li> de la liste
+       * @param {string}      type - 'table' ou 'seq'
+       */
+      function setupDrag(li, type) {
+        li.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData(
+            "text/plain",
+            JSON.stringify({ type, id: li.dataset.id }),
+          );
+          li.classList.add("dragging");
+        });
+        li.addEventListener("dragend", () => li.classList.remove("dragging"));
+        li.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          li.classList.add("drag-over");
+        });
+        li.addEventListener("dragleave", () =>
+          li.classList.remove("drag-over"),
+        );
+        li.addEventListener("drop", (e) => {
+          e.preventDefault();
+          li.classList.remove("drag-over");
+          const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+          if (data.type !== type || data.id === li.dataset.id) return;
+          const arr =
+            type === "table" ? ed.collection.tables : ed.collection.sequences;
+          const fromIdx = arr.findIndex((x) => x.id === data.id);
+          const toIdx = arr.findIndex((x) => x.id === li.dataset.id);
+          if (fromIdx < 0 || toIdx < 0) return;
+          const [item] = arr.splice(fromIdx, 1);
+          arr.splice(toIdx, 0, item);
+          edMarkDirty();
+          edRenderSidebar();
+          edSyncToDrawState();
+        });
+      }
+
+      /**
+       * Active le drag & drop sur une ligne du tableau de lignes d'une table.
+       * @param {HTMLElement} tr    - Ligne <tr>
+       * @param {string}      tblId - ID de la table parente
+       */
+      function setupLineDrag(tr, tblId) {
+        tr.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", String(tr.dataset.idx));
+          tr.classList.add("dragging");
+        });
+        tr.addEventListener("dragend", () => tr.classList.remove("dragging"));
+        tr.addEventListener("dragover", (e) => {
+          e.preventDefault();
+        });
+        tr.addEventListener("drop", (e) => {
+          e.preventDefault();
+          const fromIdx = parseInt(e.dataTransfer.getData("text/plain"), 10);
+          const toIdx = parseInt(tr.dataset.idx, 10);
+          if (isNaN(fromIdx) || isNaN(toIdx) || fromIdx === toIdx) return;
+          const tbl = ed.collection.tables.find((t) => t.id === tblId);
+          if (!tbl) return;
+          const [line] = tbl.lignes.splice(fromIdx, 1);
+          tbl.lignes.splice(toIdx, 0, line);
+          edMarkDirty();
+          renderTableForm();
+          edSyncToDrawState();
+        });
+      }
+
+      /**
+       * Active le drag & drop sur une carte item dans le formulaire séquence.
+       * @param {HTMLElement} card  - Carte item
+       * @param {string}      seqId - ID de la séquence parente
+       */
+      function setupItemDrag(card, seqId) {
+        card.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", String(card.dataset.idx));
+          card.classList.add("dragging");
+        });
+        card.addEventListener("dragend", () =>
+          card.classList.remove("dragging"),
+        );
+        card.addEventListener("dragover", (e) => {
+          e.preventDefault();
+        });
+        card.addEventListener("drop", (e) => {
+          e.preventDefault();
+          const fromIdx = parseInt(e.dataTransfer.getData("text/plain"), 10);
+          const toIdx = parseInt(card.dataset.idx, 10);
+          if (isNaN(fromIdx) || isNaN(toIdx) || fromIdx === toIdx) return;
+          const seq = ed.collection.sequences.find((s) => s.id === seqId);
+          if (!seq) return;
+          const [item] = seq.items.splice(fromIdx, 1);
+          seq.items.splice(toIdx, 0, item);
+          edMarkDirty();
+          renderSeqForm();
+          edSyncToDrawState();
+        });
+      }
+
+      // ── Context menu ──
+      let ctxType = null,
+        ctxId = null;
+      /**
+       * Affiche le menu contextuel (⋯) positionné aux coordonnées du clic.
+       * @param {MouseEvent} e    - Événement clic
+       * @param {string}     type - 'table' ou 'seq'
+       * @param {string}     id   - ID de l'objet ciblé
+       */
+      function showCtx(e, type, id) {
+        ctxType = type;
+        ctxId = id;
+        document.getElementById("ctxRename").textContent =
+          "✏ " + t("btn.rename");
+        document.getElementById("ctxDuplicate").textContent =
+          "⧉ " + t("btn.duplicate");
+        document.getElementById("ctxDelete").textContent =
+          "🗑 " + t("btn.delete");
+        const menu = document.getElementById("ctxMenu");
+        menu.style.left = e.clientX + "px";
+        menu.style.top = e.clientY + "px";
+        menu.classList.add("show");
+        e.preventDefault();
+      }
+      function ctxAction(action) {
+        document.getElementById("ctxMenu").classList.remove("show");
+        if (!ctxType || !ctxId) return;
+        if (action === "rename") {
+          edSelectItem(ctxType, ctxId);
+          setTimeout(() => {
+            const inp =
+              ctxType === "table"
+                ? document.getElementById("tblNameInput")
+                : document.querySelector('#edFormSeq input[type="text"]');
+            if (inp) {
+              inp.focus();
+              inp.select();
+            }
+          }, 50);
+        } else if (action === "duplicate") {
+          edDuplicateItem(ctxType, ctxId);
+        } else if (action === "delete") {
+          edDeleteItemConfirm(ctxType, ctxId);
+        }
+      }
+      document.addEventListener("click", () =>
+        document.getElementById("ctxMenu").classList.remove("show"),
+      );
+
+      // ── Modal ──
+      let modalConfirmFn = null;
+      /**
+       * Affiche la modale de confirmation (ou d'import de lignes).
+       * @param {string}   title        - Titre de la modale
+       * @param {string}   body         - Texte du corps
+       * @param {Function} onConfirm    - Callback exécuté si l'utilisateur confirme
+       * @param {boolean}  isDanger     - Si true, bouton de confirmation en rouge
+       * @param {boolean}  withTextarea - Si true, affiche la zone de texte (import)
+       */
+      function showModal(
+        title,
+        body,
+        onConfirm,
+        isDanger = false,
+        withTextarea = false,
+      ) {
+        document.getElementById("modalTitle").textContent = title;
+        document.getElementById("modalBody").textContent = body;
+        const ta = document.getElementById("modalTextarea");
+        if (withTextarea) {
+          ta.style.display = "";
+          ta.value = "";
+        } else ta.style.display = "none";
+        const btn = document.getElementById("modalConfirm");
+        btn.textContent = t("btn.confirm");
+        btn.className = "btn-confirm" + (isDanger ? " danger" : "");
+        modalConfirmFn = () => {
+          onConfirm();
+          closeModal();
+        };
+        document.getElementById("modalOverlay").classList.add("show");
+      }
+      function closeModal() {
+        document.getElementById("modalOverlay").classList.remove("show");
+        modalConfirmFn = null;
+      }
+
+      // ── Utils ──
+      /**
+       * Échappe les caractères HTML spéciaux pour injection sécurisée dans innerHTML.
+       * Couvre &, <, >, ". Toutes les données utilisateur provenant des fichiers
+       * .gntb sont systématiquement passées par cette fonction avant affichage.
+       * @param {string} s - Chaîne à échapper
+       * @returns {string}
+       */
+      function escHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function escHtmlInline(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      // ── beforeunload guard ──
+      window.addEventListener("beforeunload", (e) => {
+        if (ed.isDirty) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
+
+      // ── Override loadFile to also populate editor ──
+      const _origLoadFile = loadFile;
+      window.loadFile = function (evt) {
+        const file = evt.target.files[0];
+        if (!file) return;
+        state.fileName = file.name;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          parseGntb(e.target.result);
+          // Also sync to editor
+          try {
+            const raw = JSON.parse(e.target.result);
+            const col = raw.Collection || raw;
+            ed.collection = edImportCollection(col);
+            ed.fileName = file.name;
+            ed.selected = null;
+            edMarkClean();
+            edRenderAll();
+            document.getElementById("edSaveBtn").disabled = false;
+            document.getElementById("edSaveAsBtn").disabled = false;
+          } catch (err) {}
+        };
+        reader.readAsText(file, "UTF-8");
+      };
+
+      // ══════════════════════════════════════════════════════════════════════
+      //  INIT
+      // ══════════════════════════════════════════════════════════════════════
+      try {
+        const s = localStorage.getItem("gentab_lang");
+        if (s) lang = s;
+      } catch (e) {}
+      applyLang();
+      // Show empty editor hint
+      document.getElementById("edFormEmpty").style.display = "";
+    </script>
+  </body>
+</html>

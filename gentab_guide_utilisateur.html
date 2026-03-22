@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gentab v3 — Guide utilisateur</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --blue-dark:  #1E3A5F;
+    --blue-mid:   #2E6DA4;
+    --blue-light: #D6E4F0;
+    --blue-pale:  #EBF4FB;
+    --white:      #FFFFFF;
+    --grey-bg:    #F4F7FA;
+    --grey-text:  #4A5568;
+    --grey-border:#CCCCCC;
+    --red:        #C00000;
+    --amber:      #E07B00;
+    --green:      #1A6B2A;
+    --purple:     #5B2D8E;
+    --radius:     8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', system-ui, sans-serif;
+    background: var(--grey-bg);
+    color: var(--blue-dark);
+    line-height: 1.75;
+    font-size: 16px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+    color: #fff;
+    padding: 64px 40px 56px;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1;
+  }
+  .hero h1 span.v {
+    font-size: 0.45em; font-weight: 300;
+    color: var(--blue-light); vertical-align: super;
+    margin-left: 4px; letter-spacing: 0.1em;
+  }
+  .hero p {
+    font-family: 'Lora', serif; font-style: italic;
+    color: rgba(214,228,240,0.85); font-size: 1.15rem;
+    margin-top: 14px; max-width: 560px; margin-inline: auto;
+  }
+  .hero::after {
+    content: '';
+    display: block;
+    width: 56px; height: 3px;
+    background: var(--blue-light);
+    border-radius: 2px;
+    margin: 20px auto 0;
+    opacity: 0.7;
+  }
+
+  /* ── LAYOUT ── */
+  .page { display: flex; }
+
+  nav.sidebar {
+    width: 240px; flex-shrink: 0;
+    background: var(--white);
+    border-right: 1px solid var(--grey-border);
+    padding: 32px 0;
+    position: sticky; top: 0; height: 100vh;
+    overflow-y: auto;
+  }
+  .nav-section { padding: 0 12px; margin-bottom: 6px; }
+  .nav-section-title {
+    font-size: 0.58rem; font-weight: 700; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--grey-border);
+    padding: 8px 8px 4px;
+  }
+  .nav-section a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border-radius: var(--radius);
+    color: var(--grey-text); text-decoration: none;
+    font-size: 0.88rem; transition: all 0.15s;
+  }
+  .nav-section a .icon { font-size: 1rem; width: 20px; text-align: center; flex-shrink: 0; }
+  .nav-section a:hover { background: var(--blue-pale); color: var(--blue-mid); }
+  .nav-section a.active {
+    background: var(--blue-pale); color: var(--blue-dark);
+    font-weight: 600; border-left: 3px solid var(--blue-mid);
+    padding-left: 9px;
+  }
+
+  main { flex: 1; padding: 48px 56px 80px; max-width: 820px; }
+
+  /* ── SECTIONS ── */
+  section.section { scroll-margin-top: 24px; margin-bottom: 56px; }
+
+  h2 {
+    font-size: 1.5rem; font-weight: 700; color: var(--blue-dark);
+    margin-bottom: 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  h2 .section-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--blue-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+    border: 1px solid var(--blue-light);
+  }
+
+  h3 {
+    font-size: 1.05rem; font-weight: 600; color: var(--blue-mid);
+    margin: 24px 0 10px;
+  }
+
+  p { color: var(--grey-text); margin-bottom: 14px; }
+  strong { color: var(--blue-dark); font-weight: 600; }
+  em { color: var(--grey-text); }
+
+  /* ── STEP CARDS ── */
+  .steps { display: flex; flex-direction: column; gap: 14px; margin: 18px 0; }
+  .step {
+    display: flex; gap: 16px; align-items: flex-start;
+    background: var(--white); border: 1px solid var(--grey-border);
+    border-radius: var(--radius); padding: 16px 18px;
+    box-shadow: 0 1px 4px rgba(30,58,95,0.06);
+  }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--blue-mid); color: #fff;
+    font-weight: 700; font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .step-content { flex: 1; }
+  .step-content strong { display: block; font-size: 0.95rem; margin-bottom: 4px; }
+  .step-content p { margin: 0; font-size: 0.9rem; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: var(--radius); padding: 14px 18px;
+    margin: 16px 0; font-size: 0.93rem; border-left: 4px solid;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .callout .ci { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .callout.info   { background: var(--blue-pale); border-color: var(--blue-mid); color: var(--blue-dark); }
+  .callout.tip    { background: #EFF8EF; border-color: var(--green); color: #1A3D1A; }
+  .callout.warn   { background: #FFF8E7; border-color: var(--amber); color: #6B4200; }
+  .callout.dice   { background: #F5F0FF; border-color: var(--purple); color: #3A1A5A; }
+
+  /* ── CONCEPT CARDS (tables / sequences) ── */
+  .concept-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  .concept-card {
+    background: var(--white); border: 1px solid var(--grey-border);
+    border-radius: var(--radius); padding: 18px;
+    box-shadow: 0 1px 4px rgba(30,58,95,0.06);
+  }
+  .concept-card .cc-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .concept-card h4 { font-size: 0.95rem; font-weight: 700; color: var(--blue-dark); margin-bottom: 6px; }
+  .concept-card p { font-size: 0.88rem; margin: 0; }
+
+  /* ── WEIGHT VISUAL ── */
+  .weight-demo {
+    background: var(--white); border: 1px solid var(--grey-border);
+    border-radius: var(--radius); padding: 20px 22px; margin: 16px 0;
+  }
+  .weight-demo h4 { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--grey-text); margin-bottom: 14px; }
+  .weight-row {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 10px; font-size: 0.9rem;
+  }
+  .weight-row:last-child { margin-bottom: 0; }
+  .weight-label { width: 130px; flex-shrink: 0; color: var(--blue-dark); font-weight: 500; }
+  .weight-bar-wrap { flex: 1; background: var(--grey-bg); border-radius: 4px; height: 20px; overflow: hidden; }
+  .weight-bar { height: 100%; border-radius: 4px; display: flex; align-items: center;
+    padding-left: 8px; font-size: 0.75rem; font-weight: 700; color: #fff;
+    transition: width 0.4s ease; }
+  .weight-pct { width: 42px; text-align: right; flex-shrink: 0;
+    font-size: 0.82rem; color: var(--grey-text); font-weight: 600; }
+
+  /* ── EXAMPLE TABLE ── */
+  .ex-table-wrap { overflow-x: auto; margin: 14px 0; }
+  .ex-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .ex-table thead th {
+    background: var(--blue-dark); color: #fff;
+    padding: 9px 16px; text-align: left;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+  }
+  .ex-table tbody td { padding: 8px 16px; border-bottom: 1px solid var(--blue-light);
+    color: var(--grey-text); }
+  .ex-table tbody tr:nth-child(even) td { background: var(--blue-pale); }
+  .ex-table tbody tr:hover td { background: var(--blue-light); }
+  .ex-table .seq-col { color: var(--purple); font-style: italic; }
+
+  /* ── INLINE CODE ── */
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 0.82em; background: var(--blue-pale);
+    color: var(--blue-dark); padding: 2px 7px;
+    border-radius: 4px; border: 1px solid var(--blue-light);
+  }
+
+  /* ── FAQ ── */
+  .faq { display: flex; flex-direction: column; gap: 2px; }
+  .faq-item { border: 1px solid var(--grey-border); border-radius: var(--radius); overflow: hidden; }
+  .faq-q {
+    padding: 14px 18px; cursor: pointer;
+    font-weight: 600; font-size: 0.95rem; color: var(--blue-dark);
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--white); user-select: none;
+    transition: background 0.15s;
+  }
+  .faq-q:hover { background: var(--blue-pale); }
+  .faq-q .chevron { transition: transform 0.2s; font-style: normal; color: var(--blue-mid); }
+  .faq-item.open .faq-q { background: var(--blue-pale); }
+  .faq-item.open .chevron { transform: rotate(90deg); }
+  .faq-a {
+    padding: 0 18px; max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s;
+    font-size: 0.9rem; color: var(--grey-text);
+    border-top: 0 solid var(--blue-light);
+  }
+  .faq-item.open .faq-a {
+    max-height: 400px; padding: 14px 18px;
+    border-top: 1px solid var(--blue-light);
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 0.92rem; color: var(--grey-text);
+  }
+  .checklist li::before { content: '✓'; color: var(--green);
+    font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--blue-light); margin: 40px 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center; padding: 28px 20px;
+    font-size: 0.72rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--grey-text);
+    border-top: 1px solid var(--grey-border);
+    background: var(--white);
+  }
+
+  @media (max-width: 860px) {
+    nav.sidebar { display: none; }
+    main { padding: 28px 20px 60px; max-width: 100%; }
+    .concept-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Gentab<span class="v">v3</span></h1>
+  <p>Votre générateur de tables aléatoires — guide d'utilisation</p>
+</div>
+
+<div class="page">
+
+<!-- SIDEBAR -->
+<nav class="sidebar" aria-label="Navigation">
+  <div class="nav-section">
+    <div class="nav-section-title">Premiers pas</div>
+    <a href="#cest-quoi"><span class="icon">🎲</span> C'est quoi Gentab ?</a>
+    <a href="#demarrer"><span class="icon">🚀</span> Démarrer en 3 minutes</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Concepts clés</div>
+    <a href="#tables-sequences"><span class="icon">📋</span> Tables et séquences</a>
+    <a href="#poids"><span class="icon">⚖️</span> Les poids</a>
+    <a href="#colonnes"><span class="icon">📊</span> Colonnes multiples</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Créer un fichier</div>
+    <a href="#creer-table"><span class="icon">✏️</span> Créer une table</a>
+    <a href="#creer-sequence"><span class="icon">🔗</span> Créer une séquence</a>
+    <a href="#plusieurs-refs"><span class="icon">🎯</span> Plusieurs références</a>
+    <a href="#imbrication"><span class="icon">🔀</span> Séquences imbriquées</a>
+    <a href="#sauvegarder"><span class="icon">💾</span> Sauvegarder</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Tirer</div>
+    <a href="#faire-tirage"><span class="icon">⚄</span> Faire un tirage</a>
+    <a href="#lire-resultats"><span class="icon">👁️</span> Lire les résultats</a>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-title">Aller plus loin</div>
+    <a href="#conseils"><span class="icon">💡</span> Conseils pratiques</a>
+    <a href="#faq"><span class="icon">❓</span> Questions fréquentes</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── C'EST QUOI ── -->
+  <section class="section" id="cest-quoi">
+    <h2><span class="section-icon">🎲</span> C'est quoi Gentab ?</h2>
+    <p>
+      Gentab est un outil pour <strong>créer et lancer des tables aléatoires</strong>.
+      Vous définissez des listes de contenus (noms, objets, lieux, descriptions…),
+      vous indiquez la probabilité de chaque entrée, et Gentab tire des combinaisons
+      aléatoires pour vous.
+    </p>
+    <p>
+      Idéal pour les maîtres de jeu de rôle, les auteurs, les créateurs de contenu —
+      ou simplement pour quiconque a besoin de générer des résultats aléatoires
+      à partir de listes personnalisées.
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="cc-icon">📋</div>
+        <h4>Vos données</h4>
+        <p>Vous créez des <strong>tables</strong> (listes de valeurs avec des poids)
+        et des <strong>séquences</strong> (combinaisons de tables).</p>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">💾</div>
+        <h4>Vos fichiers</h4>
+        <p>Tout est sauvegardé dans un fichier <code>.gntb</code> sur votre
+        ordinateur. Aucun compte, aucun serveur, aucune connexion requise.</p>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">⚄</div>
+        <h4>Vos tirages</h4>
+        <p>Choisissez une séquence, un nombre de tirages,
+        et obtenez un tableau de résultats uniques en un clic.</p>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">🌐</div>
+        <h4>Partout, hors ligne</h4>
+        <p>Gentab est un seul fichier HTML. Ouvrez-le dans votre navigateur,
+        même sans connexion internet. Partagez-le à vos joueurs.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DÉMARRER ── -->
+  <section class="section" id="demarrer">
+    <h2><span class="section-icon">🚀</span> Démarrer en 3 minutes</h2>
+
+    <h3>Utiliser un fichier .gntb existant</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Ouvrez Gentab</strong>
+          <p>Double-cliquez sur <code>gentab.html</code> — il s'ouvre dans votre navigateur.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Chargez votre fichier</strong>
+          <p>Cliquez sur <strong>Charger</strong> (en haut de la page) et sélectionnez votre fichier <code>.gntb</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Choisissez une séquence</strong>
+          <p>Sélectionnez la séquence souhaitée dans la liste déroulante de l'onglet <strong>⚄ Tirer</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Lancez les dés !</strong>
+          <p>Indiquez le nombre de résultats voulus et cliquez sur <strong>⚄ Tirer</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <h3>Créer votre premier fichier</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Basculez sur l'onglet Éditer</strong>
+          <p>Cliquez sur <strong>✎ Éditer</strong> dans la barre d'onglets, puis sur <strong>Nouveau</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Créez vos tables</strong>
+          <p>Cliquez sur <strong>＋</strong> à côté de « Tables », donnez un nom à votre table
+          et ajoutez vos entrées avec leurs poids.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Créez une séquence</strong>
+          <p>Cliquez sur <strong>＋</strong> à côté de « Séquences », ajoutez des items
+          et reliez-les à vos tables.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Enregistrez et utilisez</strong>
+          <p>Cliquez sur <strong>Enregistrer</strong> pour sauvegarder votre fichier <code>.gntb</code>,
+          puis basculez sur l'onglet <strong>⚄ Tirer</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TABLES ET SÉQUENCES ── -->
+  <section class="section" id="tables-sequences">
+    <h2><span class="section-icon">📋</span> Tables et séquences</h2>
+    <p>
+      Gentab repose sur deux objets fondamentaux. Comprendre la différence entre les deux
+      est la clé pour créer de bons fichiers.
+    </p>
+
+    <div class="concept-grid">
+      <div class="concept-card">
+        <div class="cc-icon">📋</div>
+        <h4>La Table</h4>
+        <p>
+          Une liste de <strong>valeurs</strong>, chacune avec un <strong>poids</strong>.
+          C'est votre matière première. Exemples : une liste de prénoms, une liste d'objets,
+          une liste de lieux.
+        </p>
+      </div>
+      <div class="concept-card">
+        <div class="cc-icon">🔗</div>
+        <h4>La Séquence</h4>
+        <p>
+          Une <strong>recette de tirage</strong>. Elle définit quelles tables piocher
+          et dans quel ordre. C'est ce que vous sélectionnez pour lancer un tirage.
+        </p>
+      </div>
+    </div>
+
+    <div class="callout dice">
+      <span class="ci">🎲</span>
+      <div>
+        <strong>Analogie avec les dés :</strong> une Table, c'est comme un d20 dont chaque
+        face aurait une étiquette et un poids différent. Une Séquence, c'est la <em>formule</em>
+        qui dit « lance ce d20 et ce d8, et combine les résultats ».
+      </div>
+    </div>
+
+    <h3>Exemple concret : noms de PNJ</h3>
+    <p>
+      Pour un générateur de noms masculins, vous créeriez :
+    </p>
+    <ul style="color:var(--grey-text);padding-left:24px;margin-bottom:14px;">
+      <li>La table <strong>« Prénoms masculins »</strong> → Aidan, Bran, Corbin, Damon…</li>
+      <li>La table <strong>« Noms de famille »</strong> → Ashcroft, Blackwood, Fairchild…</li>
+      <li>La séquence <strong>« Nom masculin »</strong> → tire 1 fois dans chaque table</li>
+    </ul>
+    <p>Un tirage de 4 pourrait donner :</p>
+
+    <div class="ex-table-wrap">
+    <table class="ex-table">
+      <thead><tr><th>#</th><th>Prénom</th><th>Nom de famille</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Corbin</td><td>Ashcroft</td></tr>
+        <tr><td>2</td><td>Damon</td><td>Fairchild</td></tr>
+        <tr><td>3</td><td>Aidan</td><td>Blackwood</td></tr>
+        <tr><td>4</td><td>Bran</td><td>Kensington</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout info">
+      <span class="ci">ℹ️</span>
+      <div>Gentab garantit que <strong>chaque combinaison est unique</strong> dans un tirage :
+      vous n'obtiendrez jamais deux fois « Corbin Ashcroft » dans le même résultat.
+      Une valeur isolée (ex. « Corbin ») peut en revanche apparaître plusieurs fois
+      si elle est couplée à des noms de famille différents.</div>
+    </div>
+  </section>
+
+  <!-- ── LES POIDS ── -->
+  <section class="section" id="poids">
+    <h2><span class="section-icon">⚖️</span> Les poids</h2>
+    <p>
+      Chaque entrée d'une table a un <strong>poids</strong> — un nombre entier positif
+      qui représente sa probabilité d'être tirée. Plus le poids est élevé,
+      plus l'entrée a de chances de sortir.
+    </p>
+    <p>
+      Les poids sont <em>relatifs</em> entre eux : seul le rapport entre les valeurs compte.
+      Mettre tous les poids à 1 ou tous à 100 donne le même résultat — un tirage uniforme.
+    </p>
+
+    <div class="weight-demo">
+      <h4>Exemple — Table de rencontres</h4>
+      <div class="weight-row">
+        <span class="weight-label">Guerrier</span>
+        <div class="weight-bar-wrap">
+          <div class="weight-bar" style="width:48%;background:var(--blue-mid)">48%</div>
+        </div>
+        <span class="weight-pct">poids 10</span>
+      </div>
+      <div class="weight-row">
+        <span class="weight-label">Mage</span>
+        <div class="weight-bar-wrap">
+          <div class="weight-bar" style="width:33%;background:var(--blue-mid)">33%</div>
+        </div>
+        <span class="weight-pct">poids 7</span>
+      </div>
+      <div class="weight-row">
+        <span class="weight-label">Nécromancien</span>
+        <div class="weight-bar-wrap">
+          <div class="weight-bar" style="width:14%;background:#8B5EC0">14%</div>
+        </div>
+        <span class="weight-pct">poids 3</span>
+      </div>
+      <div class="weight-row">
+        <span class="weight-label">Demi-dieu</span>
+        <div class="weight-bar-wrap">
+          <div class="weight-bar" style="width:5%;background:var(--amber)">5%</div>
+        </div>
+        <span class="weight-pct">poids 1</span>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>
+        <strong>Astuce :</strong> l'éditeur affiche le pourcentage calculé en temps réel
+        à côté de chaque poids. Nul besoin de faire le calcul vous-même !
+      </div>
+    </div>
+
+    <h3>Quelques exemples de répartition</h3>
+    <div class="ex-table-wrap">
+    <table class="ex-table">
+      <thead><tr><th>Poids</th><th>Résultat</th><th>Usage typique</th></tr></thead>
+      <tbody>
+        <tr><td>Tous à <strong>10</strong></td><td>Tirage uniforme (équiprobable)</td><td>Listes de noms, lieux sans rareté</td></tr>
+        <tr><td>10 / 5 / 1</td><td>Commun / Rare / Très rare</td><td>Tables de butin</td></tr>
+        <tr><td>8 / 8 / 4 / 1</td><td>2 fréquents, 1 moins fréquent, 1 exceptionnel</td><td>Rencontres, événements</td></tr>
+        <tr><td>100 / 1</td><td>Le second sort ~1% du temps</td><td>Événements exceptionnels</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ── COLONNES MULTIPLES ── -->
+  <section class="section" id="colonnes">
+    <h2><span class="section-icon">📊</span> Colonnes multiples</h2>
+    <p>
+      Une séquence peut tirer dans <strong>plusieurs tables à la fois</strong>.
+      Chaque table que vous ajoutez à une séquence devient une colonne supplémentaire
+      dans le tableau de résultats.
+    </p>
+    <p>
+      Vous pouvez également choisir de tirer <strong>plusieurs valeurs</strong> dans
+      une même table pour un seul tirage, en réglant le minimum et le maximum :
+    </p>
+    <div class="ex-table-wrap">
+    <table class="ex-table">
+      <thead><tr><th>Réglage min/max</th><th>Comportement</th><th>Exemple de résultat</th></tr></thead>
+      <tbody>
+        <tr><td>min 1 / max 1</td><td>Exactement 1 valeur (défaut)</td><td>Épée</td></tr>
+        <tr><td>min 2 / max 2</td><td>Exactement 2 valeurs</td><td>Épée<br>Bouclier</td></tr>
+        <tr><td>min 1 / max 3</td><td>Entre 1 et 3 valeurs (aléatoire)</td><td>Arc<br>Potion<br>Épée</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout info">
+      <span class="ci">ℹ️</span>
+      <div>Quand plusieurs valeurs sont générées pour une même cellule, elles s'affichent
+      chacune sur <strong>sa propre ligne</strong> dans le tableau de résultats.</div>
+    </div>
+  </section>
+
+  <!-- ── CRÉER UNE TABLE ── -->
+  <section class="section" id="creer-table">
+    <h2><span class="section-icon">✏️</span> Créer une table</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Cliquez sur ＋ à côté de « Tables »</strong>
+          <p>Une nouvelle table vide est créée et sélectionnée dans le panneau de droite.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Donnez un nom à votre table</strong>
+          <p>Ce nom sera l'en-tête de colonne dans le tableau de résultats.
+          Exemples : <em>Prénom</em>, <em>Lieu</em>, <em>Type d'objet</em>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Ajoutez vos entrées</strong>
+          <p>Cliquez sur <strong>+ Ajouter une ligne</strong> et renseignez le contenu et le poids.
+          Répétez pour chaque entrée. Le pourcentage se calcule automatiquement.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>
+        <strong>Import en masse :</strong> vous avez déjà une longue liste dans un fichier texte ?
+        Cliquez sur <strong>Importer des lignes</strong> et collez votre liste —
+        une entrée par ligne. Vous pouvez aussi préciser le poids en ajoutant
+        <code>;10</code> après chaque entrée (ex. <code>Épée;10</code>).
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="ci">🖱️</span>
+      <div>
+        <strong>Réordonner :</strong> vous pouvez glisser-déposer les lignes
+        (par la poignée ⠿ à gauche) pour les réorganiser à votre guise.
+        L'ordre n'affecte pas les probabilités.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CRÉER UNE SÉQUENCE ── -->
+  <section class="section" id="creer-sequence">
+    <h2><span class="section-icon">🔗</span> Créer une séquence</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Cliquez sur ＋ à côté de « Séquences »</strong>
+          <p>Une nouvelle séquence vide est créée.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Donnez un nom et éventuellement une description</strong>
+          <p>Le nom s'affiche dans la liste déroulante de l'onglet Tirer.
+          La description apparaît en dessous du sélecteur comme aide-mémoire.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Ajoutez un item pour chaque colonne souhaitée</strong>
+          <p>Cliquez sur <strong>+ Ajouter un item</strong>. Chaque item correspond
+          à une colonne dans le tableau de résultats.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Reliez chaque item à une table</strong>
+          <p>Pour chaque item, cliquez sur <strong>+ Référence</strong>, choisissez
+          <em>Table</em>, sélectionnez votre table dans la liste, et réglez le min/max.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="ci">ℹ️</span>
+      <div>
+        Le <strong>titre de l'item</strong> sera l'en-tête de colonne dans le tableau de résultats.
+        Donnez-lui un nom parlant : <em>Prénom</em>, <em>Lieu</em>, <em>Butin</em>…
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PLUSIEURS RÉFÉRENCES ── -->
+  <section class="section" id="plusieurs-refs">
+    <h2><span class="section-icon">🎯</span> Plusieurs références dans un item</h2>
+    <p>
+      Un item peut pointer vers <strong>plusieurs tables</strong> — Gentab en choisira
+      une aléatoirement selon les poids des références. C'est utile pour créer de la
+      variété sans multiplier les séquences.
+    </p>
+
+    <h3>Exemple : prénoms mixtes</h3>
+    <p>
+      Pour une séquence qui tire indifféremment dans des prénoms masculins ou féminins,
+      créez un item « Prénom » avec <strong>deux références</strong> :
+    </p>
+    <ul style="color:var(--grey-text);padding-left:24px;margin-bottom:14px;">
+      <li>Référence 1 → Table « Prénoms masculins », poids 10</li>
+      <li>Référence 2 → Table « Prénoms féminins », poids 10</li>
+    </ul>
+    <p>
+      Les deux tables ont le même poids → 50 % de chances pour chacune.
+      Si vous mettez 7 et 3, ce sera 70 % / 30 %.
+    </p>
+
+    <div class="callout warn">
+      <span class="ci">⚠️</span>
+      <div>
+        Le poids d'une <strong>référence</strong> (dans un item avec plusieurs références)
+        n'est <em>pas</em> le même que le poids d'une <strong>ligne</strong> (dans une table).
+        Le poids de référence choisit <em>quelle table</em> utiliser.
+        Le poids de ligne choisit <em>quelle valeur</em> dans cette table.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── IMBRICATION ── -->
+  <section class="section" id="imbrication">
+    <h2><span class="section-icon">🔀</span> Séquences imbriquées</h2>
+    <p>
+      Un item peut référencer non pas une <strong>table</strong>, mais une autre
+      <strong>séquence</strong>. Dans ce cas, la sous-séquence est résolue entièrement
+      et ses colonnes s'insèrent directement dans le résultat.
+    </p>
+    <p>
+      C'est utile pour <strong>composer des séquences complexes</strong> à partir
+      de séquences plus simples déjà existantes.
+    </p>
+
+    <h3>Exemple : butin avec catégories</h3>
+    <p>
+      Vous avez deux séquences existantes :
+    </p>
+    <ul style="color:var(--grey-text);padding-left:24px;margin-bottom:14px;">
+      <li><strong>Objet Minéral</strong> → colonnes « Matière » et « Qualité »</li>
+      <li><strong>Objet Manufacturé</strong> → colonnes « Type » et « Matériau »</li>
+    </ul>
+    <p>
+      Vous créez une séquence « Butin » avec un item « Objet » qui référence
+      les deux sous-séquences avec le même poids. Selon celle choisie,
+      le tableau de résultats affichera les colonnes correspondantes.
+    </p>
+
+    <div class="callout dice">
+      <span class="ci">🔀</span>
+      <div>
+        Les colonnes issues d'une séquence imbriquée s'affichent en
+        <em style="color:var(--purple)">violet italique</em> dans le tableau de résultats
+        pour les distinguer des colonnes directes.
+      </div>
+    </div>
+
+    <div class="callout warn">
+      <span class="ci">⚠️</span>
+      <div>
+        <strong>Évitez les boucles !</strong> Si la séquence A référence la séquence B
+        qui référence la séquence A, Gentab détecte la boucle et bloque le tirage
+        pour ces séquences (signalées par ⚠).
+        Les autres séquences du fichier restent utilisables normalement.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SAUVEGARDER ── -->
+  <section class="section" id="sauvegarder">
+    <h2><span class="section-icon">💾</span> Sauvegarder votre fichier</h2>
+    <p>
+      Cliquez sur <strong>Enregistrer</strong> dans la barre d'outils de l'onglet Éditer.
+      Votre navigateur télécharge un fichier <code>.gntb</code> sur votre ordinateur.
+    </p>
+    <p>
+      Si vous voulez choisir un nom différent, utilisez <strong>Enregistrer sous…</strong>
+    </p>
+
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>
+        <strong>L'astérisque (*) dans l'onglet Éditer</strong> vous signale des
+        modifications non sauvegardées. Si vous fermez la page avec des modifications
+        en cours, votre navigateur vous avertira.
+      </div>
+    </div>
+
+    <div class="callout info">
+      <span class="ci">ℹ️</span>
+      <div>
+        Un fichier <code>.gntb</code> est simplement du <strong>texte JSON</strong>.
+        Vous pouvez l'ouvrir avec n'importe quel éditeur de texte (Notepad, VS Code…)
+        pour l'inspecter ou le modifier manuellement si vous le souhaitez.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAIRE UN TIRAGE ── -->
+  <section class="section" id="faire-tirage">
+    <h2><span class="section-icon">⚄</span> Faire un tirage</h2>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Assurez-vous qu'un fichier est chargé</strong>
+          <p>Le badge en haut de page affiche ✦ vert si un fichier est chargé correctement.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Sélectionnez une séquence</strong>
+          <p>Choisissez la séquence souhaitée dans la liste déroulante.
+          Si elle a une description, elle s'affiche juste en dessous.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Indiquez le nombre de tirages</strong>
+          <p>Le champ numérique accepte des valeurs de 1 à 100.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Cliquez sur ⚄ Tirer</strong>
+          <p>Le tableau de résultats se remplit avec des combinaisons uniques.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── LIRE LES RÉSULTATS ── -->
+  <section class="section" id="lire-resultats">
+    <h2><span class="section-icon">👁️</span> Lire les résultats</h2>
+
+    <p>Le tableau de résultats affiche :</p>
+    <ul style="color:var(--grey-text);padding-left:24px;margin-bottom:14px;">
+      <li>Une <strong>ligne par tirage</strong>, numérotée.</li>
+      <li>Une <strong>colonne par item</strong> de la séquence.</li>
+      <li>Les colonnes issues de séquences imbriquées en <em style="color:var(--purple)">violet italique</em>.</li>
+    </ul>
+
+    <p>Le badge <strong>X / Y</strong> en haut à droite indique :</p>
+    <ul style="color:var(--grey-text);padding-left:24px;margin-bottom:14px;">
+      <li>🟢 <strong>Vert (5/5)</strong> : tous les tirages demandés ont été générés.</li>
+      <li>🟠 <strong>Orange (3/5)</strong> : pas assez de combinaisons uniques disponibles —
+      Gentab a généré le maximum possible.</li>
+    </ul>
+
+    <h3>Copier et effacer</h3>
+    <ul style="color:var(--grey-text);padding-left:24px;margin-bottom:14px;">
+      <li><strong>Copier</strong> : copie les résultats dans le presse-papier au format tableau,
+      directement collable dans Excel ou LibreOffice Calc.</li>
+      <li><strong>Effacer</strong> : vide le tableau de résultats.</li>
+    </ul>
+
+    <div class="callout tip">
+      <span class="ci">💡</span>
+      <div>
+        Chaque clic sur <strong>⚄ Tirer</strong> génère un nouveau tirage
+        qui <em>s'ajoute</em> aux résultats existants. Cliquez sur
+        <strong>Effacer</strong> d'abord si vous voulez repartir de zéro.
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONSEILS ── -->
+  <section class="section" id="conseils">
+    <h2><span class="section-icon">💡</span> Conseils pratiques</h2>
+
+    <h3>Organiser son fichier</h3>
+    <ul class="checklist">
+      <li>Donnez des noms clairs à vos tables — ils deviendront les en-têtes de colonnes.</li>
+      <li>Commencez par créer toutes vos tables avant de créer vos séquences.</li>
+      <li>Une table peut être utilisée par plusieurs séquences : pas besoin de dupliquer.</li>
+      <li>Réordonnez les tables et séquences par glisser-déposer pour les classer logiquement.</li>
+    </ul>
+
+    <h3>Bien régler les poids</h3>
+    <ul class="checklist">
+      <li>Utilisez des poids simples : 10 pour commun, 5 pour rare, 1 pour exceptionnel.</li>
+      <li>Le pourcentage affiché en temps réel vous aide à visualiser la répartition.</li>
+      <li>Des poids identiques → tirage uniforme. Pratique pour des listes de noms.</li>
+      <li>L'importation en masse accepte le format <code>valeur;poids</code> pour aller vite.</li>
+    </ul>
+
+    <h3>Partager son fichier</h3>
+    <ul class="checklist">
+      <li>Partagez simplement le fichier <code>.gntb</code> — vos joueurs n'ont besoin que de <code>gentab.html</code> pour l'utiliser.</li>
+      <li>Gentab fonctionne hors ligne : parfait en session, sans connexion.</li>
+      <li>Vous pouvez avoir plusieurs fichiers <code>.gntb</code> pour différentes campagnes.</li>
+    </ul>
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section class="section" id="faq">
+    <h2><span class="section-icon">❓</span> Questions fréquentes</h2>
+
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Mon fichier .gntb ne se charge pas. Que faire ?
+          <span class="chevron">▸</span>
+        </div>
+        <div class="faq-a">
+          Vérifiez que le fichier est bien un fichier texte JSON valide (il peut s'ouvrir avec
+          un éditeur de texte et afficher du contenu lisible). Si vous avez modifié le fichier
+          manuellement, une virgule manquante ou un guillemet non fermé suffit à le corriger.
+          Des outils en ligne comme <em>jsonlint.com</em> permettent de valider du JSON gratuitement.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Le bouton « Tirer » est grisé. Pourquoi ?
+          <span class="chevron">▸</span>
+        </div>
+        <div class="faq-a">
+          Deux raisons possibles : aucun fichier n'est chargé (cliquez sur Charger), ou la séquence
+          sélectionnée contient une boucle circulaire (signalée par ⚠). Vérifiez que vos séquences
+          ne se référencent pas mutuellement en boucle dans l'onglet Éditer.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          J'obtiens « Seulement X combinaisons disponibles ». Pourquoi ?
+          <span class="chevron">▸</span>
+        </div>
+        <div class="faq-a">
+          Le nombre de combinaisons uniques possibles dépend du nombre d'entrées dans vos tables.
+          Si vous demandez 50 tirages mais que votre séquence ne peut produire que 30 combinaisons
+          distinctes (parce que les tables ont peu d'entrées), Gentab vous retourne le maximum
+          disponible. La solution : enrichissez vos tables avec plus d'entrées.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Puis-je utiliser Gentab sans connexion internet ?
+          <span class="chevron">▸</span>
+        </div>
+        <div class="faq-a">
+          Oui, complètement. Gentab est un fichier HTML unique qui fonctionne directement dans
+          votre navigateur. La seule chose qui nécessite une connexion est le chargement des polices
+          de caractères (Outfit et Lora) — si vous êtes hors ligne, le navigateur utilisera
+          automatiquement ses polices par défaut, sans impact sur le fonctionnement.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Mes données sont-elles envoyées quelque part ?
+          <span class="chevron">▸</span>
+        </div>
+        <div class="faq-a">
+          Non. Gentab fonctionne entièrement dans votre navigateur. Aucune donnée n'est transmise
+          à un serveur. Vos fichiers .gntb restent sur votre ordinateur. La seule communication
+          réseau de Gentab est le chargement des polices Google Fonts au démarrage, si vous
+          avez une connexion active.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          Puis-je modifier un fichier .gntb avec un éditeur de texte ?
+          <span class="chevron">▸</span>
+        </div>
+        <div class="faq-a">
+          Oui. Un fichier .gntb est du JSON standard — vous pouvez l'ouvrir et le modifier avec
+          Notepad, VS Code, Sublime Text, ou n'importe quel éditeur de texte. L'éditeur intégré
+          de Gentab reste cependant recommandé car il valide votre fichier en temps réel et
+          évite les erreurs de syntaxe.
+        </div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          J'ai un fichier .gntb d'une ancienne version de Gentab. Est-il compatible ?
+          <span class="chevron">▸</span>
+        </div>
+        <div class="faq-a">
+          Oui, Gentab v3 est entièrement rétrocompatible avec les fichiers créés par les versions
+          précédentes. Chargez votre ancien fichier normalement — l'application détecte
+          automatiquement le format et s'adapte.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Gentab v3 &nbsp;·&nbsp; Guide utilisateur &nbsp;·&nbsp; Mars 2026
+    <br>
+    <span style="font-size:0.9em;opacity:0.7;">THE BEER-WARE LICENSE — Do whatever you want with this. Buy me a beer if we meet.</span>
+  </footer>
+
+</main>
+</div>
+
+<script>
+// ── FAQ toggle ──
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if(!isOpen) item.classList.add('open');
+}
+
+// ── Active nav link on scroll ──
+const sections = document.querySelectorAll('section.section');
+const navLinks  = document.querySelectorAll('nav.sidebar a');
+const observer  = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      navLinks.forEach(a => a.classList.remove('active'));
+      const a = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if(a) a.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
